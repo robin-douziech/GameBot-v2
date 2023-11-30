@@ -1,0 +1,38 @@
+{
+  "m1k3y8407#0": {
+    "name": "m1k3y8407",
+    "id": "0",
+    "questions": [],
+    "event_being_created": 0,
+    "questionned_event_creation": false,
+    "msgid_to_eventid": {}
+  },
+  "m1k3y_test3#0": {
+    "name": "m1k3y_test3",
+    "id": "0",
+    "msgid_to_eventid": {}
+  },
+  "m1k3y_test4#0": {
+    "name": "m1k3y_test4",
+    "id": "0",
+    "msgid_to_eventid": {}
+  },
+  "m1k3y_test1#0": {
+    "name": "m1k3y_test1",
+    "id": "0",
+    "msgid_to_eventid": {}
+  },
+  "m1k3y_test2#0": {
+    "name": "m1k3y_test2",
+    "id": "0",
+    "msgid_to_eventid": {}
+  },
+  "yato_watch#0": {
+    "name": "yato_watch",
+    "id": "0",
+    "questions": [],
+    "event_being_created": 0,
+    "questionned_event_creation": false,
+    "msgid_to_eventid": {}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "1": {
+    "name": "bonjour",
+    "date": "10-01-2025",
+    "heure": "19h00",
+    "description": "vjibefvbe",
+    "nb_max_joueurs": "4",
+    "type_invit\u00e9s": "membres",
+    "liste d'attente": [],
+    "membres en attente": [],
+    "membres pr\u00e9sents": [
+      "m1k3y8407#0",
+      "yato_watch#0"
+    ],
+    "r\u00f4les invit\u00e9s": [],
+    "role_id": 1179915921960214649,
+    "channel_id": 1179915923415642332,
+    "creation_finished": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "roles_msgid": 1179907555766583307,
+  "roles_dic": {
+    "soir\u00e9es jeux": {
+      "reaction_name": "\ud83c\udfb2",
+      "members": []
+    },
+    "novice": {
+      "reaction_name": "\ud83d\udc76",
+      "members": []
+    },
+    "grenoble": {
+      "reaction_name": "\ud83c\udfd4\ufe0f",
+      "members": []
+    }
+  },
+  "roles_tmp": {},
+  "roles_ids": {
+    "@everyone": 1099428860514271282,
+    "GameBot App": 1179100285717712980,
+    "7tadellien(ne)": 1179100429112574022,
+    "soir\u00e9es jeux": 1179118071626080256,
+    "grenoble": 1179118074457247797,
+    "\u00e9sisarien(ne)": 1179144671893671977,
+    "colocataire": 1179144891100577813,
+    "novice": 1179763619240624228,
+    "1": 1179915921960214649
+  }
+}
