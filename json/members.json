@@ -5,7 +5,9 @@
     "questions": [],
     "event_being_created": 0,
     "questionned_event_creation": false,
-    "msgid_to_eventid": {}
+    "msgid_to_eventid": {},
+    "game_being_created": 0,
+    "questionned_game_creation": false
   },
   "m1k3y_test3#0": {
     "name": "m1k3y_test3",
@@ -33,6 +35,8 @@
     "questions": [],
     "event_being_created": 0,
     "questionned_event_creation": false,
-    "msgid_to_eventid": {}
+    "msgid_to_eventid": {},
+    "game_being_created": 0,
+    "questionned_game_creation": false
   }
 }

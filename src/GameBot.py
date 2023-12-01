@@ -12,7 +12,7 @@ logging.basicConfig(
 
 class GameBot(commands.Bot):
 
-	def __init__(self, vars_file, members_file, roles_file, events_file, *args, **kwargs):
+	def __init__(self, vars_file, members_file, roles_file, events_file, games_file, *args, **kwargs):
 		super(GameBot, self).__init__(command_prefix="!", intents=discord.Intents.all(), *args, **kwargs)
 
 		self.guild = None
@@ -30,6 +30,9 @@ class GameBot(commands.Bot):
 
 		self.events_file = events_file
 		self.events = {}
+
+		self.games_file = games_file
+		self.games = {}
 
 	def dm_command(self, function) :
 		async def wrapper(ctx, *args, **kwargs) :
@@ -157,6 +160,45 @@ class GameBot(commands.Bot):
 			self.vars["msgid_to_eventid"].pop(msg_id)
 		self.write_json(self.vars, self.vars_file)
 
+	def find_games_by_keywords(self, keywords) :
+		result = {}
+		for category in games_categories :
+			for game in self.games[category] :
+				game_keywords = self.games[category][game]["keywords"].split(';')
+				if all([keyword in game_keywords for keyword in keywords]) :
+					result[game] = self.games[category][game]
+		return result
+
+	def find_games_by_name(self, name) :
+		result = {}
+		for category in games_categories :
+			for game in self.games[category] :
+				if self.games[category][game]["name"].startswith(str(name)) :
+					result[game] = self.games[category][game]
+		return result
+
+	def delete_unfinished_games(self) :
+		games_to_delete = []
+		for game_id in self.games :
+			try :
+				int(game_id)
+			except :
+				continue
+			games_to_delete.append(game_id)
+		for game_id in games_to_delete :
+			self.games.pop(game_id)
+		self.write_json(self.games, self.games_file)
+
+	def delete_game(self, name) :
+		for category in games_categories :
+			try :
+				self.games[category].pop(str(name))
+				self.write_json(self.games, self.games_file)
+				return True
+			except :
+				pass
+		return False
+
 	async def delete_unfinished_events(self) :
 		events_to_delete = []
 		for event_id in self.events :
@@ -173,6 +215,10 @@ class GameBot(commands.Bot):
 		self.write_json(self.roles, self.roles_file)
 
 	async def delete_event(self, event_id) :
+		for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
+			Member = self.fetch_member(member)
+			await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
 		await self.guild.get_channel(self.events[str(event_id)]["channel_id"]).delete()
 		await self.guild.get_role(self.events[str(event_id)]["role_id"]).delete()
 		self.roles["roles_ids"].pop(str(event_id))
@@ -191,7 +237,9 @@ class GameBot(commands.Bot):
 			name=self.events[str(event_id)]["name"],
 			description=self.events[str(event_id)]["description"],
 			date = self.events[str(event_id)]["date"],
-			heure = self.events[str(event_id)]["heure"]
+			heure = self.events[str(event_id)]["heure"],
+			présents = " ; ".join(self.events[str(event_id)]["membres présents"]), 
+			invités = " ; ".join(self.events[str(event_id)]["membres en attente"])
 		))
 		await message.add_reaction(chr(0x2705))
 		await message.add_reaction(chr(0x274C))
@@ -279,17 +327,17 @@ class GameBot(commands.Bot):
 			msg_list.append(current_msg)
 		return msg_list
 
-	async def send_next_question(self, member) :
+	async def send_next_question(self, member, question_dic) :
 		if len(self.members[f"{member.name}#{member.discriminator}"]["questions"]) > 0 :
 			self.members[f"{member.name}#{member.discriminator}"]["questions"].pop(0)
 			if len(self.members[f"{member.name}#{member.discriminator}"]["questions"]) > 0 :
 				question = self.members[f"{member.name}#{member.discriminator}"]["questions"][0]
-				await member.dm_channel.send(event_creation_questions[question]["text"])
+				await member.dm_channel.send(question_dic[question]["text"])
 		self.write_json(self.members, self.members_file)
 
-	def answer_is_valid(self, author, answer) :
+	def answer_is_valid(self, author, answer, valid_anwers_dic) :
 		question = self.members[f"{author.name}#{author.discriminator}"]["questions"][0]
-		valid_anwers = event_creation_questions[question]["valid_answers"]
+		valid_anwers = valid_anwers_dic[question]["valid_answers"]
 		if re.match(valid_anwers, answer) :
 			return True
 		return False
@@ -302,15 +350,14 @@ class GameBot(commands.Bot):
 		if author.get_role(role_colocataire.id) != None :
 
 			if self.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] :
-				if self.answer_is_valid(author, message.content) :
+				if self.answer_is_valid(author, message.content, event_creation_questions) :
 					event_id = self.members[f"{author.name}#{author.discriminator}"]["event_being_created"]
 					question = self.members[f"{author.name}#{author.discriminator}"]["questions"][0]
 					self.events[str(event_id)][question] = message.content
 					self.write_json(self.events, self.events_file)
-					await self.send_next_question(author)
+					await self.send_next_question(author, event_creation_questions)
 
 					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
-						event_id = self.members[f"{author.name}#{author.discriminator}"]["event_being_created"]
 						channel_tmp = self.guild.get_channel(self.events[str(event_id)]["channel_id"])
 						await channel_tmp.edit(name=self.events[str(event_id)]["name"])
 						msg = f"Bienvenue dans ce salon temporaire !\n\n"
@@ -324,6 +371,26 @@ class GameBot(commands.Bot):
 						self.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] = False
 						self.write_json(self.members, self.members_file)
 						self.write_json(self.events, self.events_file)
-						await author.dm_channel.send("La soirée a bien été créée")
+						await author.dm_channel.send("Soirée créée avec succès !")
+
+			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_game_creation"] :
+				if self.answer_is_valid(author, message.content, game_creation_questions) :
+					game_id = self.members[f"{author.name}#{author.discriminator}"]["game_being_created"]
+					question = self.members[f"{author.name}#{author.discriminator}"]["questions"][0]
+					self.games[str(game_id)][question] = message.content
+					self.write_json(self.games, self.games_file)
+					await self.send_next_question(author, game_creation_questions)
+
+					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
+						self.games[str(game_id)]["creation_finished"] = True
+						self.games[self.games[str(game_id)]["category"]][self.games[str(game_id)]["name"]] = self.games[str(game_id)]
+						self.games.pop(str(game_id))
+						self.write_json(self.games, self.games_file)
+						self.members[f"{author.name}#{author.discriminator}"]["game_being_created"] = 0
+						self.members[f"{author.name}#{author.discriminator}"]["questionned_game_creation"] = False
+						self.write_json(self.members, self.members_file)
+						await author.dm_channel.send("Jeu créé avec succès !")
+
+
 
 

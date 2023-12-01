@@ -1,20 +1,26 @@
 {
   "1": {
     "name": "bonjour",
-    "date": "10-01-2025",
+    "date": "10-01-2024",
     "heure": "19h00",
-    "description": "vjibefvbe",
+    "description": "ehv epfvh efv",
     "nb_max_joueurs": "4",
-    "type_invit\u00e9s": "membres",
-    "liste d'attente": [],
+    "type_invit\u00e9s": "roles",
+    "liste d'attente": [
+      "m1k3y_test4#0"
+    ],
     "membres en attente": [],
     "membres pr\u00e9sents": [
       "m1k3y8407#0",
-      "yato_watch#0"
+      "yato_watch#0",
+      "m1k3y_test1#0",
+      "m1k3y_test3#0"
     ],
-    "r\u00f4les invit\u00e9s": [],
-    "role_id": 1179915921960214649,
-    "channel_id": 1179915923415642332,
+    "r\u00f4les invit\u00e9s": [
+      "novice"
+    ],
+    "role_id": 1180253596298784800,
+    "channel_id": 1180253597863252080,
     "creation_finished": true
   }
 }

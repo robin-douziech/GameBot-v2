@@ -1,7 +1,10 @@
+import re
+
 vars_json = "json/vars.json"
 members_json = "json/members.json"
 roles_json = "json/roles.json"
 events_json = "json/events.json"
+games_json = "json/games.json"
 
 bot_guild_id = 1099428860514271282
 
@@ -59,6 +62,8 @@ Nom de la soirée : {name}\n\
 Description : {description}\n\
 Date : {date}\n\
 Heure : {heure}\n\
+Membres présents : {présents}\n\
+Membres invités : {invités}\n\
 \n\
 Tu peux accepter ou refuser cette invitation en réagissant avec l'émoji approprié \
 (attention, une fois ta réponse envoyée, tu devras contacter un @colocataire si tu \
@@ -111,5 +116,47 @@ event_creation_questions = {
 	"type_invités": {
 		"text": "Veux-tu inviter des rôles du serveur ou inviter des membres un par un ? Dis-moi \"roles\" ou \"membres\" (on ne peut pas faire un mix des deux malheureusement)",
 		"valid_answers": r"^(roles|membres)$"
+	}
+}
+
+games_categories = ["ambiance", "amateur", "initié", "expert"]
+keywords = [
+	"deck building",
+	"worker placement",
+	"draft",
+	"cartes",
+	"dés",
+	"plis",
+	"asymétrie",
+	"rôles cachés"
+]
+game_creation_questions = {
+	"name": {
+		"text": "Quel est le nom du jeu à ajouter ?",
+		"valid_answers": r".*"
+	},
+	"description": {
+		"text": "Donne moi une courte description du jeu",
+		"valid_answers": r".*"
+	},
+	"players_min": {
+		"text": "À partir de combien de joueurs peut-on jouer à ce jeu ?",
+		"valid_answers": r"[1-9][0-9]*"
+	},
+	"players_max": {
+		"text": "Jusqu'à combien de joueurs peut-on jouer à ce jeu ?",
+		"valid_answers": r"[1-9][0-9]*"
+	},
+	"category": {
+		"text": "Quelle est la catégorie du jeu ? {" + "|".join(games_categories) + "}",
+		"valid_answers": re.compile(r"^(" + "|".join(games_categories) + ")$")
+	},
+	"duration": {
+		"text": "Combien de temps dure une partie ? (format : \"Xmin - Xmin\" ou \"XhXX - XhXX\")",
+		"valid_answers": r"^((([1-9][0-9]*min) - ([1-9][0-9]*min))|((([1-9][0-9]*)h([0-5][0-9])) - (([1-9][0-9]*)h([0-5][0-9]))))$"
+	},
+	"keywords": {
+		"text": "Tu peux me donner des mots-clé correspondant à ce jeu. Envois-moi \"None\" si tu ne veux pas en renseigner ou une liste de mots-clé séparés par des points virgules. Liste de mots-clé disponibles : \n[ "+' , '.join(keywords)+" ]",
+		"valid_answers": re.compile(r"^(None|((" + "|".join(keywords) + ")(;(" + "|".join(keywords) + "))*))$")
 	}
 }

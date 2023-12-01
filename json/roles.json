@@ -3,15 +3,26 @@
   "roles_dic": {
     "soir\u00e9es jeux": {
       "reaction_name": "\ud83c\udfb2",
-      "members": []
+      "members": [
+        "yato_watch#0",
+        "m1k3y_test1#0",
+        "m1k3y_test2#0",
+        "m1k3y_test3#0",
+        "m1k3y_test4#0"
+      ]
     },
     "novice": {
       "reaction_name": "\ud83d\udc76",
-      "members": []
+      "members": [
+        "m1k3y_test4#0"
+      ]
     },
     "grenoble": {
       "reaction_name": "\ud83c\udfd4\ufe0f",
-      "members": []
+      "members": [
+        "yato_watch#0",
+        "m1k3y_test4#0"
+      ]
     }
   },
   "roles_tmp": {},
@@ -24,6 +35,6 @@
     "\u00e9sisarien(ne)": 1179144671893671977,
     "colocataire": 1179144891100577813,
     "novice": 1179763619240624228,
-    "1": 1179915921960214649
+    "1": 1180253596298784800
   }
 }

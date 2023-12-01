@@ -12,46 +12,50 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 		await ctx.author.dm_channel.send(msg)
 
 	elif crud == "create" :
-		id_number = 1
-		while str(id_number) in bot.events :
-			id_number += 1
-		role_soirees_jeux = await bot.get_role("soirées jeux")
-		role_colocataire = await bot.get_role("colocataire")
-		category = discord.utils.get(bot.guild.categories, id=soirees_jeux_cat_id)
-		#role_tmp = await bot.guild.create_role(name=str(id_number))
-		role_tmp = await bot.get_role(str(id_number))
-		channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=category)
-		await channel_tmp.set_permissions(role_tmp, read_messages=True, send_messages=True)
-		await channel_tmp.set_permissions(role_soirees_jeux, read_messages=False, send_messages=False)
-		bot.events[str(id_number)] = {
-			"name": "",
-			"date": "",
-			"heure": "",
-			"description": "",
-			"nb_max_joueurs": "",
-			"type_invités": "",
+		if bot.members[f"{author.name}#{author.discriminator}"]["questions"] == [] :
+			id_number = 1
+			while str(id_number) in bot.events :
+				id_number += 1
+			role_soirees_jeux = await bot.get_role("soirées jeux")
+			role_colocataire = await bot.get_role("colocataire")
+			category = discord.utils.get(bot.guild.categories, id=soirees_jeux_cat_id)
+			#role_tmp = await bot.guild.create_role(name=str(id_number))
+			role_tmp = await bot.get_role(str(id_number))
+			channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=category)
+			await channel_tmp.set_permissions(role_tmp, read_messages=True, send_messages=True)
+			await channel_tmp.set_permissions(role_soirees_jeux, read_messages=False, send_messages=False)
+			bot.events[str(id_number)] = {
+				"name": "",
+				"date": "",
+				"heure": "",
+				"description": "",
+				"nb_max_joueurs": "",
+				"type_invités": "",
 
-			"liste d'attente": [], # les membres pas encore invité
-			"membres en attente": [], # les membres invité qui ont pas encore répondu
-			"membres présents": [], # les membres invités qui ont répondu "oui"
-			"rôles invités": [],
+				"liste d'attente": [], # les membres pas encore invité
+				"membres en attente": [], # les membres invité qui ont pas encore répondu
+				"membres présents": [], # les membres invités qui ont répondu "oui"
+				"rôles invités": [],
 
-			"role_id": role_tmp.id,
-			"channel_id": channel_tmp.id,
-			"creation_finished": False
-		}
-		for member in bot.guild.members :
-			if member.get_role(role_colocataire.id) != None :
-				await member.add_roles(role_tmp)
-				bot.events[str(id_number)]["membres présents"].append(f"{member.name}#{member.discriminator}")
-		bot.write_json(bot.events, bot.events_file)
+				"role_id": role_tmp.id,
+				"channel_id": channel_tmp.id,
+				"creation_finished": False
+			}
+			for member in bot.guild.members :
+				if member.get_role(role_colocataire.id) != None :
+					await member.add_roles(role_tmp)
+					bot.events[str(id_number)]["membres présents"].append(f"{member.name}#{member.discriminator}")
+			bot.write_json(bot.events, bot.events_file)
 
-		bot.members[f"{author.name}#{author.discriminator}"]["event_being_created"] = id_number
-		bot.members[f"{author.name}#{author.discriminator}"]["questions"] = ["", *list(event_creation_questions.keys())]
-		bot.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] = True
-		bot.write_json(bot.members, bot.members_file)
+			bot.members[f"{author.name}#{author.discriminator}"]["event_being_created"] = id_number
+			bot.members[f"{author.name}#{author.discriminator}"]["questions"] = ["", *list(event_creation_questions.keys())]
+			bot.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] = True
+			bot.write_json(bot.members, bot.members_file)
 
-		await bot.send_next_question(author)
+			await bot.send_next_question(author, event_creation_questions)
+
+		else :
+			await author.dm_channel.send("Finis de répondre à mes questions avant de créer une nouvelle soirée")
 
 	elif crud == "read" :
 		if event_id == None :
