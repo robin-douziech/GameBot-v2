@@ -104,6 +104,37 @@ async def teams_gamebot(ctx, *args, **kwargs) :
 	else :
 		await author.dm_channel.send("Utilisation : !teams [repartition] [joueur1] [joueur2] ...")
 
+@bot.command(name="kw")
+@bot.dm_command
+@bot.colocataire_command
+async def kw_gamebot(ctx, *args, **kwargs) :
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 1 :
+		game_list = []
+		for category in games_categories :
+			game_list += list(bot.games[category].keys())
+			if str(args[0]) in bot.games[category] :
+				game_cat = category
+		if not(str(args[0]) in game_list) :
+			await author.dm_channel.send(f"Le jeu {args[0]} n'est pas présent dans ma base de données")
+			return
+		if not(str(args[1]) in keywords) :
+			await author.dm_channel.send(f"Je ne connais pas le mot-clé {args[1]}.")
+			return
+		if bot.games[game_cat][str(args[0])]["keywords"] == "None" :
+			bot.games[game_cat][str(args[0])]["keywords"]
+			bot.write_json(bot.games, bot.games_file)
+		else :
+			bot.games[game_cat][str(args[0])]["keywords"] += f";{args[1]}"
+			bot.write_json(bot.games, bot.games_file)
+
+		await author.dm_channel.send(f"Le mot-clé {args[1]} a été ajouté au jeu {args[0]}.")
+
+	else :
+		await author.dm_channel.send("Utilisation : !kw [jeu] [mot-clé]")
+
 
 @bot.command(name="rankreset")
 @bot.dm_command

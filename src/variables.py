@@ -131,7 +131,11 @@ keywords = [
 	"dés",
 	"plis",
 	"asymétrie",
-	"rôles cachés"
+	"rôles cachés",
+	"bluff",
+	"coop",
+	"semi-coop",
+	"tuiles"
 ]
 game_creation_questions = {
 	"name": {
