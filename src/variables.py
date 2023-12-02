@@ -120,7 +120,7 @@ event_creation_questions = {
 	}
 }
 
-alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~\"#'}{)(][-|`_\\@=°+"
+alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~#'}{)(][-|`_@=°+"
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
 	"deck building",
