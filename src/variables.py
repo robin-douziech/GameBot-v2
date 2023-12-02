@@ -135,7 +135,9 @@ keywords = [
 	"bluff",
 	"coop",
 	"semi-coop",
-	"tuiles"
+	"tuiles",
+	"prise de risque",
+	"roll and write"
 ]
 game_creation_questions = {
 	"name": {
