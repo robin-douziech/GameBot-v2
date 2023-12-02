@@ -120,7 +120,7 @@ event_creation_questions = {
 	}
 }
 
-alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~\"#'}{)(][-|`_\\@=°+"
+alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~\"#'}{()][-|`_\\@=°+"
 alphabet_list = [c for c in alphabet]
 print(alphabet_list)
 print("|".join(alphabet_list))
