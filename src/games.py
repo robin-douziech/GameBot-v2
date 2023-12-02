@@ -116,7 +116,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 		for category in games_categories :
 			games_dic = bot.sort_games(bot.games[category])
 			msg += f"**Catégorie {category} :**\n"
-			for game in game_dic :
+			for game in games_dic :
 				msg += f"- {game}\n"
 			msg += "\n"
 		msg_list = bot.divide_message(msg)
