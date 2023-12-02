@@ -52,6 +52,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !vars : obtenir la liste des variables enregistrées\n"
 		msg += f"(Mais à quoi peut bien servir le fait de pouvoir enregistrer des variables ? Et bien pour certaines commandes, il est possible de donner des arguments avec ces variables en tappant '$' suivi du nom de la variable)\n"
 		msg += f"- !rankreset : archiver les classements (le truc que le bot fait au début de chaque mois, cette commande est utile si jamais le bot n'archive pas les classements au début d'un mois car il est éteint à ce moment là)\n"
+		msg += f"- !rankdelete : supprimer les classements (tous). Commande temporaire à ne jamais utiliser quand les gens auront rejoint le serveur (je la supprimerai sans doute d'ici-là)\n"
 		msg += f"- !teams [répartition] [joueur1] [joueur2] [jouer3] ... : faire des équipes aléatoirement. On peut utiliser les variables du bot pour renseigner les pseudos\n"
 		msg += f"exemple : !teams 2;2;2 $joueur1 $joueur2 $joueur3 $joueur4 $joueur5 $joueur6\n"
 		msg += f"- !kw [jeu] [mot-clé] : ajouter un mot-clé à un jeu\n"

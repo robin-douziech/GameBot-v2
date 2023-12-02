@@ -135,14 +135,26 @@ async def kw_gamebot(ctx, *args, **kwargs) :
 	else :
 		await author.dm_channel.send("Utilisation : !kw [jeu] [mot-clé]")
 
-
 @bot.command(name="rankreset")
 @bot.dm_command
 @bot.colocataire_command
 async def rankreset_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 	bot.archive_rankings()
-	await author.dm_channel.send("C'est bon ! J'ai archivé les classements ")
+	await author.dm_channel.send("C'est bon ! J'ai archivé les classements")
+
+@bot.command(name="rankdelete")
+@bot.dm_command
+@bot.colocataire_command
+async def rankdelete_gamebot(ctx, *args, **kwargs) :
+	author = bot.guild.get_member(ctx.author.id)
+	bot.rankings = {
+		"parties": {},
+		"old_parties": {}
+	}
+	bot.write_json(bot.rankings, bot.rankings_file)
+	await author.dm_channel.send("C'est bon ! J'ai supprimé les classements.")
+
 
 @bot.command(name="kill")
 @bot.dm_command
