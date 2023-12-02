@@ -161,5 +161,9 @@ game_creation_questions = {
 	"keywords": {
 		"text": "Tu peux me donner des mots-clé correspondant à ce jeu. Envois-moi \"None\" si tu ne veux pas en renseigner ou une liste de mots-clé séparés par des points virgules. Liste de mots-clé disponibles : \n[ "+' , '.join(keywords)+" ]",
 		"valid_answers": re.compile(r"^(None|((" + "|".join(keywords) + ")(;(" + "|".join(keywords) + "))*))$")
+	},
+	"rules": {
+		"text": "Donne-moi un lien vers les règles du jeu.",
+		"valid_answers": r".*"
 	}
 }

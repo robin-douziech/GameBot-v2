@@ -23,6 +23,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 						"category": "",
 						"duration": "",
 						"keywords": "",
+						"rules": "",
 
 						"creation_finished": False
 					}
@@ -103,6 +104,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 					msg += f"__Catégorie__ : {game['category']}\n"
 					if game['keywords'] != "None" :
 						msg += f"__Mots-clés__ : {' - '.join(game['keywords'].split(';'))}\n"
+					msg += f"__Règles du jeu__ : {game['rules']}\n"
 				else :
 					msg = f"J'ai trouvé plusieurs jeux dont le nom commence par \"{args[0]}\" :\n"
 					for game in games_dic :
