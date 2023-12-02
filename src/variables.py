@@ -120,7 +120,8 @@ event_creation_questions = {
 	}
 }
 
-alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~#'}{)(][-|`_@=°+"
+alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~\"#'}{)(][-|`_\\@=°+"
+alphabet_list = [c for c in alphabet]
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
 	"deck building",
@@ -135,7 +136,7 @@ keywords = [
 game_creation_questions = {
 	"name": {
 		"text": "Quel est le nom du jeu à ajouter ?",
-		"valid_answers": re.compile(r"^("+"|".join(alphabet)+")*$")
+		"valid_answers": re.compile(r"^("+"|".join(alphabet_list)+")*$")
 	},
 	"description": {
 		"text": "Donne moi une courte description du jeu",
