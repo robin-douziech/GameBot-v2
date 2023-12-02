@@ -1,4 +1,4 @@
-import re, sys
+import re
 
 vars_json = "json/vars.json"
 members_json = "json/members.json"
@@ -122,10 +122,6 @@ event_creation_questions = {
 
 alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSsTtUuùûüVvWwXxYyZz ?,.;/:§!%$£*&~\"#'}{()][-|`_\\@=°+"
 alphabet_list = [re.escape(c) for c in alphabet]
-print(alphabet_list)
-print("|".join(alphabet_list))
-print(re.compile(r"^(" + '|'.join(alphabet_list) + ")*$"))
-sys.exit()
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
 	"deck building",
