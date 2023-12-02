@@ -216,6 +216,8 @@ class GameBot(commands.Bot):
 		result = {}
 		for category in games_categories :
 			for game in self.games[category] :
+				if self.games[category][game]["name"].lower() == name.lower() :
+					return {game: self.games[category][game]}
 				if self.games[category][game]["name"].lower().startswith(str(name).lower()) :
 					result[game] = self.games[category][game]
 		return self.sort_games(result)
