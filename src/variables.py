@@ -156,7 +156,8 @@ game_creation_questions = {
 	},
 	"duration": {
 		"text": "Combien de temps dure une partie ? (format : \"Xmin - Xmin\" ou \"XhXX - XhXX\")",
-		"valid_answers": r"^((([1-9][0-9]*min) - ([1-9][0-9]*min))|((([1-9][0-9]*)h([0-5][0-9])) - (([1-9][0-9]*)h([0-5][0-9]))))$"
+		"valid_answers": r"^((([1-9][0-9]*min) - ([1-9][0-9]*min))|((([1-9][0-9]*)h([0-5][0-9])) - (([1-9][0-9]*)h([0-5][0-9]))))$",
+		"valid_answers": r"^((< (([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1}))))|((([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1}))) - (([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1})))))$"
 	},
 	"keywords": {
 		"text": "Tu peux me donner des mots-clé correspondant à ce jeu. Envois-moi \"None\" si tu ne veux pas en renseigner ou une liste de mots-clé séparés par des points virgules. Liste de mots-clé disponibles : \n[ "+' , '.join(keywords)+" ]",
