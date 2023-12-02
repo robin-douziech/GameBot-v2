@@ -5,6 +5,7 @@ members_json = "json/members.json"
 roles_json = "json/roles.json"
 events_json = "json/events.json"
 games_json = "json/games.json"
+rankings_json = "json/rankings.json"
 
 bot_guild_id = 1099428860514271282
 
@@ -119,6 +120,7 @@ event_creation_questions = {
 	}
 }
 
+alphabet = "0123456789abcdefghijklmnopqrstuvwxyz "
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
 	"deck building",
@@ -133,7 +135,7 @@ keywords = [
 game_creation_questions = {
 	"name": {
 		"text": "Quel est le nom du jeu à ajouter ?",
-		"valid_answers": r".*"
+		"valid_answers": re.compile(r"^("+"|".join(alphabet)+")*$")
 	},
 	"description": {
 		"text": "Donne moi une courte description du jeu",

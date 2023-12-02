@@ -1,6 +1,57 @@
 {
   "ambiance": {},
-  "amateur": {},
+  "amateur": {
+    "citadelles": {
+      "name": "citadelles",
+      "description": "t",
+      "players_min": "2",
+      "players_max": "7",
+      "category": "amateur",
+      "duration": "60min - 90min",
+      "keywords": "d\u00e9s",
+      "creation_finished": true
+    },
+    "citbdelles": {
+      "name": "citbdelles",
+      "description": "t",
+      "players_min": "2",
+      "players_max": "7",
+      "category": "amateur",
+      "duration": "60min - 90min",
+      "keywords": "d\u00e9s",
+      "creation_finished": true
+    },
+    "citcdelles": {
+      "name": "citcdelles",
+      "description": "t",
+      "players_min": "2",
+      "players_max": "7",
+      "category": "amateur",
+      "duration": "60min - 90min",
+      "keywords": "d\u00e9s",
+      "creation_finished": true
+    },
+    "aaa": {
+      "name": "aaa",
+      "description": "t",
+      "players_min": "2",
+      "players_max": "7",
+      "category": "amateur",
+      "duration": "60min - 90min",
+      "keywords": "d\u00e9s",
+      "creation_finished": true
+    },
+    "citbdflles": {
+      "name": "citbdflles",
+      "description": "t",
+      "players_min": "2",
+      "players_max": "7",
+      "category": "amateur",
+      "duration": "60min - 90min",
+      "keywords": "d\u00e9s",
+      "creation_finished": true
+    }
+  },
   "initi\u00e9": {},
   "expert": {}
 }

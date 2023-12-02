@@ -1,5 +1,3 @@
-import discord, json
-
 from helpers import *
 
 @bot.event
@@ -24,11 +22,18 @@ async def on_ready():
 		bot.events = json.load(f)
 	with open(bot.games_file, "rt") as f :
 		bot.games = json.load(f)
+	with open(bot.rankings_file, "rt") as f :
+		bot.rankings = json.load(f)
 
 	for elt in ["msgid_to_eventid"] :
 		if not(elt in bot.vars) :
 			bot.vars[elt] = {}
 	bot.write_json(bot.vars, bot.vars_file)
+
+	for elt in ["parties", "old_parties"] :
+		if not(elt in bot.rankings) :
+			bot.rankings[elt] = {}
+	bot.write_json(bot.rankings, bot.rankings_file)
 
 	for category in games_categories :
 		if not(category in bot.games) :
@@ -96,6 +101,8 @@ async def on_ready():
 
 	bot.log(f"{bot.user.display_name} est prêt.")
 	print(f"{bot.user.display_name} est prêt.")
+
+	clock.start()
 
 @bot.event
 async def on_member_join(member) :
@@ -212,3 +219,20 @@ async def on_message(message) :
 		await bot.process_commands(message)
 	else :
 		await bot.process_msg(message)
+
+@tasks.loop(seconds = 60)
+async def clock() :
+
+	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
+	date = now.split()[0]
+	time = now.split()[1]
+	hours = time.split(':')[0]
+	minutes = time.split(':')[1]
+
+	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
+
+	bot.log(f"now : {date} {time}")
+
+	if date.split('/')[0] == "01" and time == "00:00": 
+		bot.archive_rankings()
+		bot.log("Classements archivés")

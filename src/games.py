@@ -55,8 +55,9 @@ async def game_gamebot(ctx, *args, **kwargs) :
 			if len(args) > 1: 
 				if args[1] in games_categories :
 					if len(bot.games[str(args[1])]) > 0 :
+						game_dic = bot.sort_games(bot.games[str(args[1])])
 						msg = f"Voici les jeux de la catégorie {args[1]} :\n"
-						for game in bot.games[str(args[1])] :
+						for game in game_dic :
 							msg += f"- {game}\n"
 						msg_list = bot.divide_message(msg)
 						for msg in msg_list :

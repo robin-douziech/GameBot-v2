@@ -33,6 +33,86 @@ async def set_gamebot(ctx, varname=None, value=None, *args, **kwargs) :
 	else :
 		await ctx.author.dm_channel.send("Utilisation : !set [varname] [value]")
 
+@bot.command(name="vars")
+@bot.dm_command
+@bot.colocataire_command
+async def vars_gamebot(ctx, *args, **kwargs) :
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 0 and args[0] == "clean" :
+		bot.vars["tmp_vars"] = {}
+		bot.write_json(bot.vars, bot.vars_file)
+		await author.send("C'est bon ! J'ai rangé ma chambre.")
+
+	else :
+		msg = "Voici les variables actuellement enregistrées :\n"
+		for variable in bot.vars["tmp_vars"] :
+			msg += f"{variable} : {bot.vars['tmp_vars'][variable]}\n"
+		msg_list = bot.divide_message(msg)
+		for msg in msg_list :
+			await author.dm_channel.send(msg)
+
+@bot.command(name="teams")
+@bot.dm_command
+@bot.colocataire_command
+@bot.read_dollar_vars
+async def teams_gamebot(ctx, *args, **kwargs) :
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 0 :
+		try :
+			list_teams_card = [int(x) for x in args[0].split(';')]
+			nb_players = sum(list_teams_card)
+			if len(args) > nb_players :
+
+				# on  vérifie qu'on connais tous les pseudo et qu'il n'y a pas de doublon
+				for i,player in enumerate(args[1:]) :
+					if not(str(player) in bot.members) :
+						await author.dm_channel.send(f"Le pseudo {player} n'appartient à aucun joueur du serveur")
+						return
+					other_players = list(args[1:])
+					other_players.pop(i)
+					if str(player) in other_players :
+						await author.dm_channel.send(f"J'ai détecté un doublon dans la liste des joueurs")
+						return
+
+				players = list(args[1:])
+				teams = []
+				for card in list_teams_card :
+					teams.append([])
+					for i in range(card) :
+						player = random.choice(players)
+						teams[-1].append(player)
+						players.remove(player)
+
+				msg = f"Voici les équipes que j'ai constituées :\n"
+				for i,team in enumerate(teams) :
+					msg += f"Équipe {i+1} : {' / '.join(team)}\n"
+
+				msg_list = bot.divide_message(msg)
+				for msg in msg_list :
+					await author.dm_channel.send(msg)
+
+			else :
+				await author.dm_channel.send("Tu n'as pas donné assez de joueurs pour faire les équipes")
+
+		except :
+			await author.dm_channel.send("Utilisation : !teams [repartition] [joueur1] [joueur2] ...")
+
+	else :
+		await author.dm_channel.send("Utilisation : !teams [repartition] [joueur1] [joueur2] ...")
+
+
+@bot.command(name="rankreset")
+@bot.dm_command
+@bot.colocataire_command
+async def rankreset_gamebot(ctx, *args, **kwargs) :
+	author = bot.guild.get_member(ctx.author.id)
+	bot.archive_rankings()
+	await author.dm_channel.send("C'est bon ! J'ai archivé les classements ")
+
 @bot.command(name="kill")
 @bot.dm_command
 @bot.colocataire_command

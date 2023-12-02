@@ -1,5 +1,6 @@
-from discord.ext import commands
-import discord, json, logging, re
+from discord.ext import commands, tasks
+import discord, json, logging
+import datetime as dt
 
 from variables import *
 
@@ -10,9 +11,22 @@ logging.basicConfig(
     filename="gamebot.log"
 )
 
+def strcmp(str1, str2, aplhabet) :
+	if str1 == str2 :
+		return 0
+	for i in range(min([len(str1), len(str2)])) :
+		if aplhabet.index(str1[i]) > aplhabet.index(str2[i]) :
+			return 1
+		elif aplhabet.index(str1[i]) < aplhabet.index(str2[i]) :
+			return -1
+	if len(str1) < len(str2) :
+		return -1
+	else :
+		return 1
+
 class GameBot(commands.Bot):
 
-	def __init__(self, vars_file, members_file, roles_file, events_file, games_file, *args, **kwargs):
+	def __init__(self, vars_file, members_file, roles_file, events_file, games_file, rankings_file, *args, **kwargs):
 		super(GameBot, self).__init__(command_prefix="!", intents=discord.Intents.all(), *args, **kwargs)
 
 		self.guild = None
@@ -34,6 +48,9 @@ class GameBot(commands.Bot):
 		self.games_file = games_file
 		self.games = {}
 
+		self.rankings_file = rankings_file
+		self.rankings = {}
+
 	def dm_command(self, function) :
 		async def wrapper(ctx, *args, **kwargs) :
 			author = self.guild.get_member(ctx.author.id)
@@ -53,7 +70,7 @@ class GameBot(commands.Bot):
 			if author.get_role(role.id) != None :
 				await function(ctx, *args, **kwargs)
 			else :
-				await author.dm_channel.send("Vous n'avez pas la permission d'utiliser cette commande")
+				await author.dm_channel.send("Seuls les @colocataires peuvent utiliser cette commande")
 		return wrapper
 
 	def read_dollar_vars(self, function) :
@@ -160,6 +177,32 @@ class GameBot(commands.Bot):
 			self.vars["msgid_to_eventid"].pop(msg_id)
 		self.write_json(self.vars, self.vars_file)
 
+	def archive_rankings(self) :
+		for game in self.rankings["parties"] :
+			if not(game in self.rankings["old_parties"]) :
+				self.rankings["old_parties"][game] = {}
+			for player in self.rankings["parties"][game] :
+				if not(player in self.rankings["old_parties"][game]) :
+					self.rankings["old_parties"][game][player] = []
+				self.rankings["old_parties"][game][player] += self.rankings["parties"][game][player]
+		self.rankings["parties"] = {}
+		self.write_json(self.rankings, self.rankings_file)
+
+	def sort_games(self, game_dic) :
+		game_list = []
+		for game in game_dic :
+			index = 0
+			while index < len(game_list) and (strcmp(game, game_list[index], alphabet) > 0) :
+				index += 1
+			if index == len(game_list) :
+				game_list.append(game)
+			else :
+				game_list = game_list[:index] + [game] + game_list[index:]
+		sorted_game_dic = {}
+		for game in game_list :
+			sorted_game_dic[game] = game_dic[game]
+		return sorted_game_dic
+
 	def find_games_by_keywords(self, keywords) :
 		result = {}
 		for category in games_categories :
@@ -167,15 +210,15 @@ class GameBot(commands.Bot):
 				game_keywords = self.games[category][game]["keywords"].split(';')
 				if all([keyword in game_keywords for keyword in keywords]) :
 					result[game] = self.games[category][game]
-		return result
+		return self.sort_games(result)
 
 	def find_games_by_name(self, name) :
 		result = {}
 		for category in games_categories :
 			for game in self.games[category] :
-				if self.games[category][game]["name"].startswith(str(name)) :
+				if self.games[category][game]["name"].lower().startswith(str(name).lower()) :
 					result[game] = self.games[category][game]
-		return result
+		return self.sort_games(result)
 
 	def delete_unfinished_games(self) :
 		games_to_delete = []
