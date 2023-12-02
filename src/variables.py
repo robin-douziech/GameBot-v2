@@ -124,7 +124,7 @@ alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSs
 alphabet_list = [c for c in alphabet]
 print(alphabet_list)
 print("|".join(alphabet_list))
-
+print(re.compile(r"^(" + '|'.join(alphabet_list) + ")*$"))
 sys.exit()
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
