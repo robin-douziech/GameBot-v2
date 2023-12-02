@@ -155,8 +155,7 @@ game_creation_questions = {
 		"valid_answers": re.compile(r"^(" + "|".join(games_categories) + ")$")
 	},
 	"duration": {
-		"text": "Combien de temps dure une partie ? (format : \"Xmin - Xmin\" ou \"XhXX - XhXX\")",
-		"valid_answers": r"^((([1-9][0-9]*min) - ([1-9][0-9]*min))|((([1-9][0-9]*)h([0-5][0-9])) - (([1-9][0-9]*)h([0-5][0-9]))))$",
+		"text": "Combien de temps dure une partie ? (format : \"< X\" ou \"X - X\" avec X au format \"Xmin\" ou \"Xh[XX]\")",
 		"valid_answers": r"^((< (([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1}))))|((([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1}))) - (([1-9][0-9]*min)|(([1-9][0-9]*)h(([0-5][0-9]){0,1})))))$"
 	},
 	"keywords": {
