@@ -41,7 +41,7 @@ async def play_gamebot(ctx, *args, **kwargs) :
 async def ranking_gamebot(ctx, *args, **kwargs) :
 	
 	author = bot.guild.get_member(ctx.author.id)
-	parties = bot.rankings["parties"]
+	parties = copy.deepcopy(bot.rankings["parties"])
 	players = {}
 	all_time = False
 
