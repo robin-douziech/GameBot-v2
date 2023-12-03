@@ -68,7 +68,7 @@ async def on_ready():
 			members_to_remove.append(member)
 	for member in members_to_remove :
 		await bot.remove_member_from_all_events(member)
-		await bot.channels["colocation"].send(f"{member} est parti(e) quand j'étais hors ligne, il faut aller retirer ses réactions au message des rôles svp.")
+		await bot.channels["colocation"].send(f"{member} est parti(e), il faut aller retirer ses réactions au message des rôles svp.")
 		bot.members.pop(member)
 	for member in bot.members :
 		for default_value in default_member_value :
@@ -122,8 +122,7 @@ async def on_member_join(member) :
 async def on_member_remove(member) :
 	complete_pseudo = f"{member.name}#{member.discriminator}"
 	if complete_pseudo in bot.members and not(member in bot.guild.members) :
-		for reaction in bot.roles_msg.reactions :
-			await reaction.remove(member)
+		await bot.channels["colocation"].send(f"{member} est parti(e), il faut aller retirer ses réactions au message des rôles svp.")
 		await bot.remove_member_from_all_events(f"{member.name}#{member.discriminator}")
 		bot.members.pop(complete_pseudo)
 		bot.write_json(bot.members, bot.members_file)
