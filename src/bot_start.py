@@ -131,7 +131,7 @@ async def on_raw_reaction_add(payload) :
 	message = await channel.fetch_message(payload.message_id)
 	author = bot.guild.get_member(payload.user_id)
 
-	if not(author.bot) :
+	if not(author.bot) and message.author.bot :
 
 		if message == bot.roles_msg :
 			for role_name in bot.roles["roles_dic"] :
@@ -186,7 +186,7 @@ async def on_raw_reaction_remove(payload) :
 	except :
 		return
 
-	if not(author.bot) :
+	if not(author.bot) and message.author.bot :
 
 		if message == bot.roles_msg :
 			for role_name in bot.roles["roles_dic"] :
