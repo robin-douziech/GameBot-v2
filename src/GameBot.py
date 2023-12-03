@@ -138,7 +138,7 @@ class GameBot(commands.Bot):
 			tadelles=tadelles.mention,
 			soirées_jeux=soirées_jeux.mention,
 			grenoble=grenoble.mention,
-			novice=novice.mentio
+			novice=novice.mention
 		))
 		for role_name in self.roles["roles_dic"] :
 			await self.roles_msg.add_reaction(self.roles["roles_dic"][role_name]["reaction_name"])
