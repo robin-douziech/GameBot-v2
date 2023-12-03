@@ -68,6 +68,7 @@ async def on_ready():
 			members_to_remove.append(member)
 	for member in members_to_remove :
 		await bot.remove_member_from_all_events(member)
+		await bot.channels["colocation"].send(f"{member} est parti(e) quand j'étais hors ligne, il faut aller retirer ses réactions au message des rôles svp.")
 		bot.members.pop(member)
 	for member in bot.members :
 		for default_value in default_member_value :
