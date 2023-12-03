@@ -103,7 +103,7 @@ async def on_ready():
 	for category in games_categories :
 		game_list += list(bot.games[category].keys())
 	game = random.choice(game_list)
-	await bot.change_presence(activity=discord.Game(f"à {game}"))
+	await bot.change_presence(activity=discord.Game(f"{game}"))
 
 	bot.log(f"{bot.user.display_name} est prêt.")
 	print(f"{bot.user.display_name} est prêt.")
@@ -248,5 +248,4 @@ async def clock() :
 		for category in games_categories :
 			game_list += list(bot.games[category].keys())
 		game = random.choice(game_list)
-		await bot.change_presence(activity=discord.Game(f"à {game}"))
-		
+		await bot.change_presence(activity=discord.Game(f"{game}"))
