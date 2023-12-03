@@ -24,7 +24,7 @@ role_to_channel = {
 
 # /!\ Si CRLF en début ou fin de message, le bot ne les enverra pas dans le message
 #     et renverra donc le message à chaque redémarrage (donc ne pas faire !)
-roles_msg = """Salut jeune joueur,
+roles_msg = """Salut {tadelles},
 Ici, tu peux décider d'avoir ou non certains rôles du serveur. Réagis à ce message avec l'émoji correspondant au rôle que tu souhaites avoir :
 - si tu souhaites avoir le rôle {soirées_jeux} pour être informé(e) des soirées jeux organisées à Grenoble, réagis avec :game_die:
 - si tu es un joueur peu expérimenté et que tu souhaites découvrir les jeux de société lors de soirées d'initiation ou simplement que tu aimes les jeux d'ambiance, tu peux réagir avec :baby: pour obtenir le rôle {novice}
@@ -40,7 +40,7 @@ Moi c'est **GameBot**,\n\
 Je suis le bot s'occupant du serveur 7tadelles (un des meilleurs serveurs discord du monde à mon humble avis).\n\
 \n\
 Laisse-moi te présenter rapidement ce serveur :\n\
-7tadelles est un serveur discord conçu par le merveilleux M1k3y (je suis très objectif hein). Il a pour but \
+7tadelles est un serveur discord conçu par le talentueux M1k3y (je suis très objectif hein). Il a pour but \
 de réunir des personnes ayant un goût plus ou moins prononcé pour les jeux de société afin qu'elles puissent \
 jouer ensemble aussi fréquement qu'elles le souhaitent. Tous les types et niveaux de joueurs sont les \
 bienvenus dans ce serveur et y trouveront (j'espère) ce qu'ils cherchent. Que tu sois novice ou \
@@ -68,7 +68,7 @@ Membres invités : {invités}\n\
 \n\
 Tu peux accepter ou refuser cette invitation en réagissant avec l'émoji approprié \
 (attention, une fois ta réponse envoyée, tu devras contacter un @colocataire si tu \
-veux la modifier, donc réfléchis bien avant de répondre, tu as tout ton temps)."
+souhaites la modifier, donc réfléchis bien avant de répondre, tu as tout ton temps)."
 
 member_invitation_msg_start = "Salut !\n\
 \n\
@@ -85,13 +85,9 @@ Description : {description}\n\
 Date : {date}\n\
 Heure : {heure}\n\
 \n\
-Réagis avec :+1: si tu souhaites participer !\n\
-\n\
-NB: retirer cette réaction te désinscrira de la soirée donc fais attention à ne pas retirer ta réaction par inadvertance car s'il y a des personnes dans la liste d'attente, la place que tu libères leur sera donnée"
+J'espère vous y voir nombreux :slight_smile:"
 
-role_invitation_msg_end = "Réagis avec :+1: si tu souhaites participer !\n\
-\n\
-NB: retirer cette réaction te désinscrira de la soirée donc fais attention à ne pas retirer ta réaction par inadvertance car s'il y a des personnes dans la liste d'attente, la place que tu libères leur sera donnée"
+role_invitation_msg_end = "J'espère vous y voir nombreux :slight_smile:"
 
 event_creation_questions = {
 	"name": {

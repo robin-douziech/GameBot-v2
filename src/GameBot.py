@@ -121,19 +121,25 @@ class GameBot(commands.Bot):
 			return role
 
 	async def send_or_retreive_roles_msg(self) :
+		tadelles = await self.get_role("7tadellien(ne)")
 		soirées_jeux = await self.get_role("soirées jeux")
 		grenoble = await self.get_role("grenoble")
 		novice = await self.get_role("novice")
 		try :
 			self.roles_msg = await self.channels["roles"].fetch_message(self.roles["roles_msgid"])
-			if self.roles_msg.content != roles_msg.format(soirées_jeux=soirées_jeux.mention, grenoble=grenoble.mention, novice=novice.mention) :
+			if self.roles_msg.content != roles_msg.format(tadelles=tadelles.mention, soirées_jeux=soirées_jeux.mention, grenoble=grenoble.mention, novice=novice.mention) :
 				await self.send_roles_msg(soirées_jeux, grenoble, novice)
 		except: 
-			await self.send_roles_msg(soirées_jeux, grenoble, novice)
+			await self.send_roles_msg(tadelles, soirées_jeux, grenoble, novice)
 
-	async def send_roles_msg(self, soirées_jeux, grenoble, novice) :
+	async def send_roles_msg(self, tadelles, soirées_jeux, grenoble, novice) :
 		await self.channels["roles"].purge()
-		self.roles_msg = await self.channels["roles"].send(roles_msg.format(soirées_jeux=soirées_jeux.mention, grenoble=grenoble.mention, novice=novice.mention))
+		self.roles_msg = await self.channels["roles"].send(roles_msg.format(
+			tadelles=tadelles.mention,
+			soirées_jeux=soirées_jeux.mention,
+			grenoble=grenoble.mention,
+			novice=novice.mentio
+		))
 		for role_name in self.roles["roles_dic"] :
 			await self.roles_msg.add_reaction(self.roles["roles_dic"][role_name]["reaction_name"])
 		self.roles["roles_msgid"] = self.roles_msg.id
@@ -348,9 +354,11 @@ class GameBot(commands.Bot):
 
 	async def invite_role_to_event(self, event_id, role) :
 		if role.name in role_to_channel :
+			role_colocataire = self.guild.get_role(self.roles["roles_ids"]["colocataire"])
 			nb_max_players_txt = ""
 			if self.events[str(event_id)]["nb_max_joueurs"] != "infinity" :
-				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée. Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais.\n"				
+				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée ({self.events[str(event_id)]['nb_max_joueurs']} places, {role_colocataire.mention} compris). Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais."
+				nb_max_players_txt += "Retirer ta réaction te désinscrira de la soirée et libèrera ta place si tu y participes, ou te retirera de la liste d'attente si tu es dedans. Remettre cette réaction après l'avoir retirée te placera au bout de la liste d'attente s'il y en a une donc fais bien attention à ne pas retirer ta réaction par inadvertance.\n"			
 			message = await self.channels[role.name].send(role_invitation_msg.format(
 				role=role.mention,
 				name=self.events[str(event_id)]["name"],
