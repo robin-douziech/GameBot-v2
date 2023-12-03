@@ -43,6 +43,9 @@ async def on_ready():
 	bot.roles["roles_ids"] = await bot.fetch_roles_ids()
 	bot.write_json(bot.roles, bot.roles_file)
 
+	# envoi/récupération du message des rôles
+	await bot.send_or_retreive_roles_msg()
+
 	default_member_value = {
 		"name": "",
 		"id": "",
@@ -95,9 +98,6 @@ async def on_ready():
 	# suppression des soirées/jeux pas créées entièrement
 	await bot.delete_unfinished_events()
 	bot.delete_unfinished_games()
-
-	# envoi/récupération du message des rôles
-	await bot.send_or_retreive_roles_msg()
 
 	# synchronisation des roles (comparaison entre les membres ayant réagi et ceux ayant le rôle)
 	for role_name in bot.roles["roles_dic"] :
