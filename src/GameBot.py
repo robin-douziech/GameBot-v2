@@ -60,6 +60,8 @@ class GameBot(commands.Bot):
 			if ctx.channel == dm_channel :
 				await function(ctx, *args, **kwargs)
 			else :
+				message = await ctx.channel.fetch_message(ctx.message.id)
+				await ctx.channel.delete_messages([message])
 				await dm_channel.send("Pour me demander ça, c'est ici que ça se passe")
 		return wrapper
 
