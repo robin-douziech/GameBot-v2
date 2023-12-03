@@ -348,12 +348,16 @@ class GameBot(commands.Bot):
 
 	async def invite_role_to_event(self, event_id, role) :
 		if role.name in role_to_channel :
+			nb_max_players_txt = ""
+			if self.events[str(event_id)]["nb_max_joueurs"] != "infinity" :
+				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée. Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais.\n"				
 			message = await self.channels[role.name].send(role_invitation_msg.format(
 				role=role.mention,
 				name=self.events[str(event_id)]["name"],
 				description=self.events[str(event_id)]["description"],
 				date=self.events[str(event_id)]["date"],
-				heure=self.events[str(event_id)]["heure"]
+				heure=self.events[str(event_id)]["heure"],
+				nb_max_joueurs=nb_max_players_txt
 			))
 			await message.add_reaction(chr(0x1F44D))
 			self.events[str(event_id)]["rôles invités"].append(role.name)

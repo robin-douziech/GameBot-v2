@@ -75,10 +75,10 @@ member_invitation_msg_start = "Salut !\n\
 Tu as été invité(e) à une soirée jeux à Grenoble !\n\
 Voici quelques informations sur la soirée :\n"
 
-role_invitation_msg = "Salut {role} !\n\
+role_invitation_msg = "Salut {role},\n\
 \n\
-Une nouvelle soirée jeux arrive et tu y as été invité !\n\
-\n\
+Une nouvelle soirée jeux arrive ! Si tu souhaites y participer, réagis avec :+1:\n\
+{nb_max_joueurs}\n\
 Voici quelques informations sur la soirée :\n\
 Nom : {name}\n\
 Description : {description}\n\
