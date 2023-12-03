@@ -204,7 +204,7 @@ class GameBot(commands.Bot):
 			for player in self.rankings["parties"][game] :
 				if not(player in self.rankings["old_parties"][game]) :
 					self.rankings["old_parties"][game][player] = []
-				self.rankings["old_parties"][game][player] += self.rankings["parties"][game][player]
+				self.rankings["old_parties"][game][player].extend(self.rankings["parties"][game][player])
 		self.rankings["parties"] = {}
 		self.write_json(self.rankings, self.rankings_file)
 
