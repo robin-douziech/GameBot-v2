@@ -107,6 +107,40 @@ async def on_ready():
 	game = random.choice(game_list)
 	await bot.change_presence(activity=discord.Game(f"{game}"))
 
+	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
+	date = now.split()[0]
+	time = now.split()[1]
+
+	day = date.split('/')[0]
+	month = date.split('/')[1]
+	year = date.split('/')[2]
+
+	hours = time.split(':')[0]
+	minutes = time.split(':')[1]
+
+	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
+
+	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
+		day = str(int(day)+1)
+		if int(day) > calendar.monthrange(int(year), int(month)) :
+			day = "01"
+			month = str(int(month)+1)
+			if int(month) > 12 :
+				month = "01"
+				year = str(int(year)+1)
+
+	try :
+		os.makedirs(f"{year}/{month}")
+	except :
+		pass
+
+	logging.basicConfig(
+	    level=logging.INFO,
+	    format='[%(asctime)s] %(levelname)s - %(message)s',
+	    datefmt='%Y-%m-%d %H:%M:%S',
+	    filename=f"{year}/{month}/{day}.log"
+	)
+
 	bot.log(f"{bot.user.display_name} est prêt.")
 	print(f"{bot.user.display_name} est prêt.")
 
@@ -234,14 +268,28 @@ async def clock() :
 	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
 	date = now.split()[0]
 	time = now.split()[1]
+
+	day = date.split('/')[0]
+	month = date.split('/')[1]
+	year = date.split('/')[2]
+
 	hours = time.split(':')[0]
 	minutes = time.split(':')[1]
 
 	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
 
+	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
+		day = str(int(day)+1)
+		if int(day) > calendar.monthrange(int(year), int(month)) :
+			day = "01"
+			month = str(int(month)+1)
+			if int(month) > 12 :
+				month = "01"
+				year = str(int(year)+1)
+
 	bot.log(f"now : {date} {time}")
 
-	if date.split('/')[0] == "01" and time == "00:00": 
+	if day == "01" and time == "00:00": 
 		bot.archive_rankings()
 		bot.log("Classements archivés")
 
@@ -251,3 +299,21 @@ async def clock() :
 			game_list += list(bot.games[category].keys())
 		game = random.choice(game_list)
 		await bot.change_presence(activity=discord.Game(f"{game}"))
+
+	if time == "00:01" :
+		if day == "01" :
+			if month == "01" :
+				try :
+					os.mkdir(f"{year}")
+				except :
+					pass
+			try :
+				os.mkdir(f"{year}/{month}")
+			except :
+				pass
+		logging.basicConfig(
+		    level=logging.INFO,
+		    format='[%(asctime)s] %(levelname)s - %(message)s',
+		    datefmt='%Y-%m-%d %H:%M:%S',
+		    filename=f"{year}/{month}/{day}.log"
+		)

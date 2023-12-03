@@ -1,5 +1,5 @@
 from discord.ext import commands, tasks
-import discord, json, logging, random
+import discord, json, logging, random, os, calendar
 import datetime as dt
 
 from variables import *
@@ -7,8 +7,7 @@ from variables import *
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-    filename="gamebot.log"
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
 
 def strcmp(str1, str2, aplhabet) :

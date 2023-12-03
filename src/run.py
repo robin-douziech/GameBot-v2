@@ -1,4 +1,4 @@
-import os, sys
+import sys
 from dotenv import load_dotenv
 from commands import *
 
