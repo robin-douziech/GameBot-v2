@@ -242,3 +242,11 @@ async def clock() :
 	if date.split('/')[0] == "01" and time == "00:00": 
 		bot.archive_rankings()
 		bot.log("Classements archivés")
+
+	if minutes == "00" :
+		game_list = []
+		for category in games_categories :
+			game_list += list(bot.games[category].keys())
+		game = random.choice(game_list)
+		await bot.change_presence(activity=discord.Game(f"à {game}"))
+		
