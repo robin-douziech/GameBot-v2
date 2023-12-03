@@ -130,7 +130,7 @@ async def on_ready():
 				year = str(int(year)+1)
 
 	try :
-		os.makedirs(f"{year}/{month}")
+		os.makedirs(f"logs/20{year}/{month}")
 	except :
 		pass
 
@@ -138,7 +138,7 @@ async def on_ready():
 	    level=logging.INFO,
 	    format='[%(asctime)s] %(levelname)s - %(message)s',
 	    datefmt='%Y-%m-%d %H:%M:%S',
-	    filename=f"{year}/{month}/{day}.log"
+	    filename=f"logs/20{year}/{month}/{day}.log"
 	)
 
 	bot.log(f"{bot.user.display_name} est prêt.")
@@ -304,16 +304,16 @@ async def clock() :
 		if day == "01" :
 			if month == "01" :
 				try :
-					os.mkdir(f"{year}")
+					os.makedirs(f"logs/20{year}")
 				except :
 					pass
 			try :
-				os.mkdir(f"{year}/{month}")
+				os.makedirs(f"logs/20{year}/{month}")
 			except :
 				pass
 		logging.basicConfig(
 		    level=logging.INFO,
 		    format='[%(asctime)s] %(levelname)s - %(message)s',
 		    datefmt='%Y-%m-%d %H:%M:%S',
-		    filename=f"{year}/{month}/{day}.log"
+		    filename=f"logs/20{year}/{month}/{day}.log"
 		)
