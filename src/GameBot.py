@@ -98,6 +98,19 @@ class GameBot(commands.Bot):
 		with open(file, "wt") as f :
 			f.write(json_object)
 
+	async def remove_member_from_all_events(self, member) :
+		for event_id in self.events :
+			for str_ in ["liste d'attente", "membres en attente", "membres présents"] :
+				try :
+					self.events[event_id][str_].remove(member)
+				except :
+					pass
+			self.write_json(self.events, self.events_file)
+			if self.events[event_id]["type_invités"] == "membres" :
+				await self.update_invitations_members(event_id)
+			else :
+				await self.update_invitations_roles(event_id)
+
 	def fetch_member(self, pseudo) :
 		for member in self.guild.members :
 			if pseudo == f"{member.name}#{member.discriminator}" :

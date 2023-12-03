@@ -67,11 +67,7 @@ async def on_ready():
 		Member = bot.fetch_member(member)
 		for reaction in bot.roles_msg.reactions :
 			await reaction.remove(Member)
-		for msg_id in bot.vars["msgid_to_eventid"] :
-			channel = bot.guild.get_channel(bot.events[str(bot.vars["msgid_to_eventid"][msg_id])]["channel_id"])
-			message = await channel.fetch_message(int(msg_id))
-			for reaction in message.reactions :
-				await reaction.remove(Member)
+		await bot.remove_member_from_all_events(f"{member.name}#{member.discriminator}")
 		bot.members.pop(member)
 	for member in bot.members :
 		for default_value in default_member_value :
@@ -130,11 +126,7 @@ async def on_member_remove(member) :
 	if complete_pseudo in bot.members and not(member in bot.guild.members) :
 		for reaction in bot.roles_msg.reactions :
 			await reaction.remove(member)
-		for msg_id in bot.vars["msgid_to_eventid"] :
-			channel = bot.guild.get_channel(bot.events[str(bot.vars["msgid_to_eventid"][msg_id])]["channel_id"])
-			message = await channel.fetch_message(int(msg_id))
-			for reaction in message.reactions :
-				await reaction.remove(member)
+		await bot.remove_member_from_all_events(f"{member.name}#{member.discriminator}")
 		bot.members.pop(complete_pseudo)
 		bot.write_json(bot.members, bot.members_file)
 
