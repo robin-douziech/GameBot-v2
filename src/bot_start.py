@@ -67,9 +67,6 @@ async def on_ready():
 		if member not in guild_members :
 			members_to_remove.append(member)
 	for member in members_to_remove :
-		Member = bot.fetch_member(member)
-		for reaction in bot.roles_msg.reactions :
-			await reaction.remove(Member)
 		await bot.remove_member_from_all_events(f"{member.name}#{member.discriminator}")
 		bot.members.pop(member)
 	for member in bot.members :
