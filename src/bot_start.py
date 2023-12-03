@@ -122,7 +122,7 @@ async def on_ready():
 
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
 		day = str(int(day)+1)
-		if int(day) > calendar.monthrange(int(year), int(month)) :
+		if int(day) > int(calendar.monthrange(int(year), int(month))[1]) :
 			day = "01"
 			month = str(int(month)+1)
 			if int(month) > 12 :
@@ -276,14 +276,12 @@ async def clock() :
 
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
 		day = str(int(day)+1)
-		if int(day) > calendar.monthrange(int(year), int(month)) :
+		if int(day) > int(calendar.monthrange(int(year), int(month))[1]) :
 			day = "01"
 			month = str(int(month)+1)
 			if int(month) > 12 :
 				month = "01"
 				year = str(int(year)+1)
-
-	bot.log(f"now : {date} {time}")
 
 	if day == "01" and time == "00:00": 
 		bot.archive_rankings()
