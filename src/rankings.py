@@ -87,9 +87,7 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 
 	# trier
 	players_tuples = [(player, players[player]) for player in players]
-	print(players_tuples)
 	ranking = sorted(players_tuples, key=lambda x: x[1])[::-1]
-	print(f"ranking : {ranking}")
 
 	if all_time :
 		if len(args) > 0 :
