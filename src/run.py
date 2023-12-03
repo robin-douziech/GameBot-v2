@@ -1,4 +1,4 @@
-import os, sys, random
+import os, sys
 from dotenv import load_dotenv
 from commands import *
 

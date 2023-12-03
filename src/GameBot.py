@@ -1,5 +1,5 @@
 from discord.ext import commands, tasks
-import discord, json, logging
+import discord, json, logging, random
 import datetime as dt
 
 from variables import *

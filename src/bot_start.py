@@ -99,6 +99,12 @@ async def on_ready():
 	for role_name in bot.roles["roles_dic"] :
 		await sync_role(role_name)
 
+	game_list = []
+	for category in games_categories :
+		game_list += list(bot.games[category].keys())
+	game = random.choice(game_list)
+	await bot.change_presence(activity=discord.Game(f"à {game}"))
+
 	bot.log(f"{bot.user.display_name} est prêt.")
 	print(f"{bot.user.display_name} est prêt.")
 
