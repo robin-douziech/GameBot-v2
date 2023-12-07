@@ -8,6 +8,7 @@ async def on_ready():
 	bot.channels["roles"]     = bot.guild.get_channel(roles_channel_id)
 	bot.channels["colocation"] = bot.guild.get_channel(colocation_channel_id)
 	bot.channels["général-annonces"] = bot.guild.get_channel(general_annonces_channel_id)
+	bot.channels["test"] = bot.guild.get_channel(test_channel_id)
 
 	for role in role_to_channel :
 		bot.channels[role] = bot.guild.get_channel(role_to_channel[role])
@@ -134,6 +135,10 @@ async def on_ready():
 	except :
 		pass
 
+	logging.basicConfig(
+		format='[%(asctime)s] %(levelname)s - %(message)s',
+		datefmt='%Y-%m-%d %H:%M:%S'
+	)
 	handler = logging.FileHandler(f"logs/20{year}/{month}/{day}.log")
 	logging.getLogger().handlers = [handler]
 
@@ -261,8 +266,6 @@ async def on_message(message) :
 @tasks.loop(seconds = 60)
 async def clock() :
 
-	owner = bot.guild.get_member(bot_owner_id)
-
 	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
 	date = now.split()[0]
 	time = now.split()[1]
@@ -286,12 +289,12 @@ async def clock() :
 				year = str(int(year)+1)
 
 	if minutes in ['00', '15', '30', '45'] :
-		await owner.dm_channel.send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
+		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
 
 	if day == "01" and time == "00:00": 
 		bot.archive_rankings()
 		bot.log("Classements archivés")
-		await owner.dm_channel.send("Classements archivés")
+		await bot.channels["test"].send("Classements archivés")
 
 	if minutes == "00" :
 		game_list = []
@@ -301,18 +304,22 @@ async def clock() :
 		await bot.change_presence(activity=discord.Game(f"{game}"))
 
 	if time == "00:01" :
-		await owner.dm_channel.send("Changement de jour")
+		await bot.channels["test"].send("Changement de jour")
 		if day == "01" :
-			await owner.dm_channel.send("Changement de mois")
+			await bot.channels["test"].send("Changement de mois")
 			if month == "01" :
-				await owner.dm_channel.send("Changement d'année")
+				await bot.channels["test"].send("Changement d'année")
 				try :
 					os.makedirs(f"logs/20{year}")
 				except :
-					pass
+					await bot.channels["test"].send("error 1")
 			try :
 				os.makedirs(f"logs/20{year}/{month}")
 			except :
-				pass
+				await bot.channels["test"].send("error 2")
+		logging.basicConfig(
+			format='[%(asctime)s] %(levelname)s - %(message)s',
+			datefmt='%Y-%m-%d %H:%M:%S'
+		)
 		handler = logging.FileHandler(f"logs/20{year}/{month}/{day}.log")
 		logging.getLogger().handlers = [handler]
