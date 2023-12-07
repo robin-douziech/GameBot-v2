@@ -303,6 +303,7 @@ async def clock() :
 
 	if time == "00:01" :
 		await bot.channels["test"].send("Changement de jour")
+		bot.log(f"Nouveau jour : nous sommes le {day}/{month}/{year}")
 		if day == "01" :
 			await bot.channels["test"].send("Changement de mois")
 			if month == "01" :
