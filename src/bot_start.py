@@ -135,11 +135,9 @@ async def on_ready():
 	except :
 		pass
 
-	logging.basicConfig(
-		format='[%(asctime)s] %(levelname)s - %(message)s',
-		datefmt='%Y-%m-%d %H:%M:%S'
-	)
+	formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
 	handler = logging.FileHandler(f"logs/20{year}/{month}/{day}.log")
+	handler.setFormatter(formatter)
 	logging.getLogger().handlers = [handler]
 
 	bot.log(f"{bot.user.display_name} est prêt.")
@@ -317,9 +315,7 @@ async def clock() :
 				os.makedirs(f"logs/20{year}/{month}")
 			except :
 				await bot.channels["test"].send("error 2")
-		logging.basicConfig(
-			format='[%(asctime)s] %(levelname)s - %(message)s',
-			datefmt='%Y-%m-%d %H:%M:%S'
-		)
+		formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
 		handler = logging.FileHandler(f"logs/20{year}/{month}/{day}.log")
+		handler.setFormatter(formatter)
 		logging.getLogger().handlers = [handler]
