@@ -261,6 +261,8 @@ async def on_message(message) :
 @tasks.loop(seconds = 60)
 async def clock() :
 
+	owner = bot.guild.get_member(bot_owner_id)
+
 	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
 	date = now.split()[0]
 	time = now.split()[1]
@@ -283,9 +285,13 @@ async def clock() :
 				month = "01"
 				year = str(int(year)+1)
 
+	if minutes in ['00', '15', '30', '45'] :
+		await owner.dm_channel.send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
+
 	if day == "01" and time == "00:00": 
 		bot.archive_rankings()
 		bot.log("Classements archivés")
+		await owner.dm_channel.send("Classements archivés")
 
 	if minutes == "00" :
 		game_list = []
@@ -295,8 +301,11 @@ async def clock() :
 		await bot.change_presence(activity=discord.Game(f"{game}"))
 
 	if time == "00:01" :
+		await owner.dm_channel.send("Changement de jour")
 		if day == "01" :
+			await owner.dm_channel.send("Changement de mois")
 			if month == "01" :
+				await owner.dm_channel.send("Changement d'année")
 				try :
 					os.makedirs(f"logs/20{year}")
 				except :

@@ -16,6 +16,8 @@ general_annonces_channel_id = 1179810037116444802
 
 soirees_jeux_cat_id = 1179145721572765706
 
+bot_owner_id = 394185214479302656
+
 role_to_channel = {
 	"ésisarien(ne)": 1179805849531719775,
 	"soirées jeux": 1179805962987647037,
