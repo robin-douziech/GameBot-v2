@@ -390,8 +390,8 @@ class GameBot(commands.Bot):
 	def divide_message(self, message) :
 		lines = message.split("\n")
 		for i in range(len(lines)) :
-			if lines[i] == "\n" :
-				lines[i] = "\u200B\n"
+			if lines[i] == "" :
+				lines[i] = "\u200B"
 		msg_list = []
 		while len(lines) > 0 :
 			current_msg = ""
