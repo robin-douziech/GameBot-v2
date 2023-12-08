@@ -391,7 +391,7 @@ class GameBot(commands.Bot):
 		lines = message.split("\n")
 		for i in range(len(lines)) :
 			if lines[i] == "\n" :
-				lines[i] = "\n\u200B"
+				lines[i] = "\u200B\n"
 		msg_list = []
 		while len(lines) > 0 :
 			current_msg = ""
