@@ -279,9 +279,13 @@ async def clock() :
 
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
 		day = str(int(day)+1)
+		if len(day) < 2 :
+			day = f"0{day}"
 		if int(day) > int(calendar.monthrange(int(year), int(month))[1]) :
 			day = "01"
 			month = str(int(month)+1)
+			if len(month) < 2 :
+				month = f"0{month}"
 			if int(month) > 12 :
 				month = "01"
 				year = str(int(year)+1)
@@ -301,12 +305,12 @@ async def clock() :
 		game = random.choice(game_list)
 		await bot.change_presence(activity=discord.Game(f"{game}"))
 
-	if time == "00:01" :
+	if time == "00:00" :
 		await bot.channels["test"].send("Changement de jour")
 		bot.log(f"Nouveau jour : nous sommes le {day}/{month}/{year}")
-		if day == "01" :
+		if int(day) == 1 :
 			await bot.channels["test"].send("Changement de mois")
-			if month == "01" :
+			if int(month) == 1 :
 				await bot.channels["test"].send("Changement d'année")
 				try :
 					os.makedirs(f"logs/20{year}")
