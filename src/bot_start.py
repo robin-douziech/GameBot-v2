@@ -292,7 +292,7 @@ async def clock() :
 				month = "01"
 				year = str(int(year)+1)
 
-	if minutes in ['00', '15', '30', '45'] :
+	if (hour in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45'])
 		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
 
 	if day == "01" and time == "00:00": 
