@@ -276,6 +276,8 @@ async def clock() :
 	minutes = time.split(':')[1]
 
 	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
+
+	bot.log(f"time: {time}")
 	
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
 		day = str(int(day)+1)
