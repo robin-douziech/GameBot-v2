@@ -119,16 +119,23 @@ async def on_ready():
 	hours = time.split(':')[0]
 	minutes = time.split(':')[1]
 
-	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
-
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
+		hours = str((int(hours)+int(bot.vars['clock_hour_offset']))%24)
+		if len(hours) < 2 :
+			hours = f"0{hours}"
 		day = str(int(day)+1)
+		if len(day) < 2 :
+			day = f"0{day}"
 		if int(day) > int(calendar.monthrange(int(year), int(month))[1]) :
 			day = "01"
 			month = str(int(month)+1)
+			if len(month) < 2 :
+				month = f"0{month}"
 			if int(month) > 12 :
 				month = "01"
 				year = str(int(year)+1)
+
+	time = f"{hours}:{minutes}"
 
 	try :
 		os.makedirs(f"logs/20{year}/{month}")
@@ -274,13 +281,11 @@ async def clock() :
 
 	hours = time.split(':')[0]
 	minutes = time.split(':')[1]
-
-	time = f"{(int(hours)+int(bot.vars['clock_hour_offset']))%24}:{minutes}"
-	hours = time.split(':')[0]
-
-	bot.log(f"time: {time}")
 	
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
+		hours = str((int(hours)+int(bot.vars['clock_hour_offset']))%24)
+		if len(hours) < 2 :
+			hours = f"0{hours}"
 		day = str(int(day)+1)
 		if len(day) < 2 :
 			day = f"0{day}"
@@ -293,7 +298,10 @@ async def clock() :
 				month = "01"
 				year = str(int(year)+1)
 
-	if (hours in ['22', '23', '24', '0'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '0'] and int(minutes)<10) :
+	time = f"{hours}:{minutes}"
+	bot.log(f"time: {time}")
+
+	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
 		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
 
 	if day == "01" and time == "00:00": 
@@ -308,7 +316,7 @@ async def clock() :
 		game = random.choice(game_list)
 		await bot.change_presence(activity=discord.Game(f"{game}"))
 
-	if time == "0:00" :
+	if time == "00:00" :
 		await bot.channels["test"].send("Changement de jour")
 		bot.log(f"Nouveau jour : nous sommes le {day}/{month}/{year}")
 		if int(day) == 1 :
