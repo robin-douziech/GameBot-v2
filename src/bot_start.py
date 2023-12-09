@@ -283,9 +283,6 @@ async def clock() :
 	minutes = time.split(':')[1]
 	
 	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
-		hours = str((int(hours)+int(bot.vars['clock_hour_offset']))%24)
-		if len(hours) < 2 :
-			hours = f"0{hours}"
 		day = str(int(day)+1)
 		if len(day) < 2 :
 			day = f"0{day}"
@@ -297,6 +294,10 @@ async def clock() :
 			if int(month) > 12 :
 				month = "01"
 				year = str(int(year)+1)
+
+	hours = str((int(hours)+int(bot.vars['clock_hour_offset']))%24)
+	if len(hours) < 2 :
+		hours = f"0{hours}"
 
 	time = f"{hours}:{minutes}"
 	bot.log(f"time: {time}")
