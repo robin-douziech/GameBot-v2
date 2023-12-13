@@ -176,13 +176,17 @@ game_creation_questions = {
 }
 
 poll_creation_questions = {
-	"poll": {
+	"text_poll": {
 		"text": "Envoie-moi le texte du sondage que tu veux créer, puis réagis à ton message avec les réactions à utiliser pour le sondage",
 		"valid_answers": r".*"
 	},
-	"envoi": {
-		"text": "Quand tu as finis d'ajouter les réactions à ton message, envoie-moi \"envoyer\" pour que j'envoie le sondage dans le serveur.",
-		"valid_answers": r"^(envoyer)$"
+	"end_date": {
+		"text": "Donne moi la date de fin du sondage (je pourrai annoncer les résultats à cette date). Ajoute \"N\" à la fin du message pour que je n'annonce pas les résultats. Format: jj/mm/aa hh:mm [N]",
+		"valid_answers": r"^((0[1-9]|[1-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/(2[3-9]|[3-9][0-9]) ([0-1][0-9]|2[0-3]):([0-5][0-9])( N){0,1})$"
+	},
+	"confirmation": {
+		"text": "__**Après avoir ajouté les réactions à ton message**__, confirme-moi que tu veux vraiment envoyer ce sondage et que tu n'as pas fait d'erreur (oui/non)",
+		"valid_answers": r"^(oui|non)$"
 	}
 	
 }

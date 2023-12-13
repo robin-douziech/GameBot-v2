@@ -27,8 +27,9 @@ async def on_ready():
 		bot.rankings = json.load(f)
 	with open(bot.polls_file, "rt") as f :
 		bot.polls = json.load(f)
-	with open(bot.news_file, "rt") as f :
-		bot.news = json.load(f)
+
+	bot.news = {}
+	bot.write_json(bot.news, bot.news_file)
 
 	for elt in ["msgid_to_eventid"] :
 		if not(elt in bot.vars) :
@@ -102,9 +103,10 @@ async def on_ready():
 			bot.members[f"{member.name}#{member.discriminator}"]["questions"] = []
 	bot.write_json(bot.members, bot.members_file)
 
-	# suppression des soirées/jeux pas créées entièrement
+	# suppression des soirées/jeux/sondages pas créés entièrement
 	await bot.delete_unfinished_events()
 	bot.delete_unfinished_games()
+	bot.delete_unfinished_polls()
 
 	# synchronisation des roles (comparaison entre les membres ayant réagi et ceux ayant le rôle)
 	for role_name in bot.roles["roles_dic"] :
@@ -181,51 +183,62 @@ async def on_raw_reaction_add(payload) :
 	message = await channel.fetch_message(payload.message_id)
 	author = bot.guild.get_member(payload.user_id)
 
-	if not(author.bot) and message.author.bot :
+	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
-		if message == bot.roles_msg :
-			for role_name in bot.roles["roles_dic"] :
-				if bot.roles["roles_dic"][role_name]["reaction_name"] == payload.emoji.name :
-					role = await bot.get_role(role_name)
-					await author.add_roles(role)
+	if not(author.bot) :
 
-		elif message.content.endswith(role_invitation_msg_end) :
-			if payload.emoji.name == chr(0x1F44D) :
-				try :
-					event_id = bot.vars["msgid_to_eventid"][str(message.id)]
-					event = bot.events[str(event_id)]
-					if not(f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["membres présents"]+bot.events[str(event_id)]["liste d'attente"]) :
-						bot.events[str(event_id)]["liste d'attente"].append(f"{author.name}#{author.discriminator}")
-						bot.write_json(bot.events, bot.events_file)
-						await bot.update_invitations_roles(event_id)
-				except :
-					await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+		if message.author.bot :
 
-		elif channel == author.dm_channel :
-			if message.content == dm_welcome_msg and payload.emoji.name == chr(0x1F197) :
-				await bot.send_welcome_message_in_channel(author)
-			elif message.content.startswith(member_invitation_msg_start) :
-				if payload.emoji.name in [chr(0x2705), chr(0x274C)] :
+			if message == bot.roles_msg :
+				for role_name in bot.roles["roles_dic"] :
+					if bot.roles["roles_dic"][role_name]["reaction_name"] == payload.emoji.name :
+						role = await bot.get_role(role_name)
+						await author.add_roles(role)
+
+			elif message.content.endswith(role_invitation_msg_end) :
+				if payload.emoji.name == chr(0x1F44D) :
 					try :
-						event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"][str(message.id)]
-						event = bot.events[str(event_id)]		
-						if payload.emoji.name == chr(0x2705) : # accepter
-							bot.events[str(event_id)]["membres présents"].append(f"{author.name}#{author.discriminator}")
-							bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
-							role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
-							await author.add_roles(role)
-							await author.dm_channel.send("Génial ! Heureux de te savoir parmi nous lors de cette soirée :slight_smile:")
-							await bot.channels["colocation"].send(f"{author.name} a accepté l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
-						elif payload.emoji.name == chr(0x274C) : # refuser
-							bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
-							await bot.channels["colocation"].send(f"{author.name} a refusé l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
-							await author.dm_channel.send("Très bien, peut-être une prochaine fois alors")
-							await bot.update_invitations_members(event_id)
-						event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"].pop(str(message.id))
-						bot.write_json(bot.members, bot.members_file)
-						bot.write_json(bot.events, bot.events_file)
+						event_id = bot.vars["msgid_to_eventid"][str(message.id)]
+						event = bot.events[str(event_id)]
+						if not(f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["membres présents"]+bot.events[str(event_id)]["liste d'attente"]) :
+							bot.events[str(event_id)]["liste d'attente"].append(f"{author.name}#{author.discriminator}")
+							bot.write_json(bot.events, bot.events_file)
+							await bot.update_invitations_roles(event_id)
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+
+			elif channel == author.dm_channel :
+				if message.content == dm_welcome_msg and payload.emoji.name == chr(0x1F197) :
+					await bot.send_welcome_message_in_channel(author)
+				elif message.content.startswith(member_invitation_msg_start) :
+					if payload.emoji.name in [chr(0x2705), chr(0x274C)] :
+						try :
+							event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"][str(message.id)]
+							event = bot.events[str(event_id)]		
+							if payload.emoji.name == chr(0x2705) : # accepter
+								bot.events[str(event_id)]["membres présents"].append(f"{author.name}#{author.discriminator}")
+								bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
+								role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
+								await author.add_roles(role)
+								await author.dm_channel.send("Génial ! Heureux de te savoir parmi nous lors de cette soirée :slight_smile:")
+								await bot.channels["colocation"].send(f"{author.name} a accepté l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
+							elif payload.emoji.name == chr(0x274C) : # refuser
+								bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
+								await bot.channels["colocation"].send(f"{author.name} a refusé l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								await author.dm_channel.send("Très bien, peut-être une prochaine fois alors")
+								await bot.update_invitations_members(event_id)
+							event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"].pop(str(message.id))
+							bot.write_json(bot.members, bot.members_file)
+							bot.write_json(bot.events, bot.events_file)
+						except :
+							await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+		else :
+			if channel == author.dm_channel :
+				if author.get_role(role_colocataire.id) != None :
+					for poll_id in bot.polls :
+						if message.id == bot.polls[poll_id]["dm_msg_id"] :
+							bot.polls[poll_id]["reactions"].append(payload.emoji.name)
+							bot.write_json(bot.polls, bot.polls_file)
 
 @bot.event
 async def on_raw_reaction_remove(payload) :
@@ -236,35 +249,46 @@ async def on_raw_reaction_remove(payload) :
 	except :
 		return
 
-	if not(author.bot) and message.author.bot :
+	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
-		if message == bot.roles_msg :
-			for role_name in bot.roles["roles_dic"] :
-				if bot.roles["roles_dic"][role_name]["reaction_name"] == payload.emoji.name :
-					role = await bot.get_role(role_name)
-					await author.remove_roles(role)
+	if not(author.bot) :
 
-		elif message.content.endswith(role_invitation_msg_end) :
-			if payload.emoji.name == chr(0x1F44D) :
-				try :
-					event_id = bot.vars["msgid_to_eventid"][str(message.id)]
-					event = bot.events[str(event_id)]
-					role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
-					if author.get_role(role_colocataire.id) == None :
-						if f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["liste d'attente"] :
-							bot.events[str(event_id)]["liste d'attente"].remove(f"{author.name}#{author.discriminator}")
-							bot.write_json(bot.events, bot.events_file)
-							await author.dm_channel.send(f"Tu as été retiré(e) de la liste d'attente pour cette soirée.")
-						elif f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["membres présents"] :
-							role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
-							await author.remove_roles(role)
-							await author.dm_channel.send(f"Tu as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
-							await bot.channels["colocation"].send(f"{author.name} as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
-							bot.events[str(event_id)]["membres présents"].remove(f"{author.name}#{author.discriminator}")
-							bot.write_json(bot.events, bot.events_file)
-							await bot.update_invitations_roles(event_id)
-				except :
-					await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")		
+		if message.author.bot :
+
+			if message == bot.roles_msg :
+				for role_name in bot.roles["roles_dic"] :
+					if bot.roles["roles_dic"][role_name]["reaction_name"] == payload.emoji.name :
+						role = await bot.get_role(role_name)
+						await author.remove_roles(role)
+
+			elif message.content.endswith(role_invitation_msg_end) :
+				if payload.emoji.name == chr(0x1F44D) :
+					try :
+						event_id = bot.vars["msgid_to_eventid"][str(message.id)]
+						event = bot.events[str(event_id)]
+						role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
+						if author.get_role(role_colocataire.id) == None :
+							if f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["liste d'attente"] :
+								bot.events[str(event_id)]["liste d'attente"].remove(f"{author.name}#{author.discriminator}")
+								bot.write_json(bot.events, bot.events_file)
+								await author.dm_channel.send(f"Tu as été retiré(e) de la liste d'attente pour cette soirée.")
+							elif f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["membres présents"] :
+								role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
+								await author.remove_roles(role)
+								await author.dm_channel.send(f"Tu as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								await bot.channels["colocation"].send(f"{author.name} as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								bot.events[str(event_id)]["membres présents"].remove(f"{author.name}#{author.discriminator}")
+								bot.write_json(bot.events, bot.events_file)
+								await bot.update_invitations_roles(event_id)
+					except :
+						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+		else :
+			if channel == author.dm_channel :
+				if author.get_role(role_colocataire.id) != None :
+					for poll_id in bot.polls :
+						if message.id == bot.polls[poll_id]["dm_msg_id"] :
+							bot.polls[poll_id]["reactions"].remove(payload.emoji.name)
+							bot.write_json(bot.polls, bot.polls_file)
 
 @bot.event
 async def on_message(message) :

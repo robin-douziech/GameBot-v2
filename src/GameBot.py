@@ -248,6 +248,15 @@ class GameBot(commands.Bot):
 					result[game] = self.games[category][game]
 		return self.sort_games(result)
 
+	def delete_unfinished_polls(self) :
+		polls_to_delete = []
+		for poll_id in self.polls :
+			if not(self.polls[str(poll_id)]["creation_finished"]) :
+				polls_to_delete.append(poll_id)
+		for poll_id in polls_to_delete :
+			self.polls.pop(poll_id)
+		self.write_json(self.polls, self.polls_file)
+
 	def delete_unfinished_games(self) :
 		games_to_delete = []
 		for game_id in self.games :
@@ -485,6 +494,24 @@ class GameBot(commands.Bot):
 						self.news.pop(str(news_id))
 						self.write_json(self.news, self.news_file)
 
+			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_poll_creation"] :
+				if self.answer_is_valid(author, message.content, poll_creation_questions) :
+					poll_id = self.members[f"{author.name}#{author.discriminator}"]["poll_being_created"]
+					question = self.members[f"{author.name}#{author.discriminator}"]["questions"][0]
+					self.polls[str(poll_id)][question] = message.content
+					if question == "text_poll" :
+						self.polls[str(poll_id)]["dm_msg_id"] = message.id
+					self.write_json(self.polls, self.polls_file)
+					await self.send_next_question(author, poll_creation_questions)
 
-
-
+					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
+						self.polls[str(poll_id)]["creation_finished"] = True
+						if self.polls[str(poll_id)]["confirmation"] == "oui" :
+							message = await self.channels["général-annonces"].send(self.polls[str(poll_id)]["text_poll"])
+							self.polls[str(poll_id)]["msg_id"] = message.id
+							self.write_json(self.polls, self.polls_file)
+							for reaction_name in self.polls[str(poll_id)]["reactions"] :
+								await message.add_reaction(reaction_name)
+						else :
+							self.pop(str(poll_id))
+							self.write_json(self.polls, self.polls_file)
