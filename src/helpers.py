@@ -44,7 +44,7 @@ def poll_results(poll_id) :
 	labels = range(1, len(bot.polls[str(poll_id)]['reactions'])+1)
 	data = [len(bot.polls[str(poll_id)]['results'][option]) for option in bot.polls[str(poll_id)]['reactions']]
 	fig, ax = plt.subplots()
-	bars = ax.bar(labels, data, color="blue")
+	bars = ax.bar(labels, data, color="green")
 	ax.set_xlabel('Options')
 	ax.set_ylabel('Nombre de réponses')
 	ax.set_title('Résultats du sondage')

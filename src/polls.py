@@ -43,10 +43,12 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 			if len(args) > 1 :
 				if str(args[1]) in bot.polls :
 					poll_id = str(args[1])
-					msg = f"Voici les résultats du sondage :"
+					msg = f"Voici les résultats du sondage :\n"
+					for i in range(1, len(bot.polls[poll_id]["reactions"])+1) :
+						msg += f"**{i}**: {bot.polls[poll_id]['reactions'][i-1]}\n"
 					poll_results(poll_id)
 					file = discord.File(f'poll_{poll_id}.png')
-					await bot.channels["colocation"].send(msg, file=file)
+					await author.dm_channel.send(msg, file=file)
 
 				else :
 					await author.dm_channel.send("Aucun sondage ne porte cet identifiant")
