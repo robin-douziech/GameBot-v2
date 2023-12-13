@@ -23,6 +23,13 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !invite [event_id] [pseudo] delete : supprimer un membres des membres présents à une soirée\n"
 		msg += f"\n"
 
+		msg += f"**Gestion des sondages :**\n\n"
+		msg += f"- !poll create : créer un nouveau sondage (je vais te poser les questions nécessaires, laisse-toi guider ;) ). Si tu fais une erreur lors de la création du sondage, tu auras l'occasion de l'annuler avant que je ne l'envoie à la fin de mes questions.\n"
+		msg += f"- !poll read : obtenir la liste des identifiants des sondages en cours\n"
+		msg += f"- !poll read [poll_id] : obtenir les résultats provisoires d'un sondage\n"
+		msg += f"- !poll delete [poll_id] : supprimer un sondage\n"
+		msg += f"\n"
+
 	msg += f"**Jeux présents dans ma base de données :**\n\n"
 	if author.get_role(role_colocataire.id) != None :
 		msg += f"- !game create : ajouter un jeu à la base de données (je vais te poser les questions nécessaires, laisse-toi guider ;) )\n"
@@ -56,6 +63,8 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !teams [répartition] [joueur1] [joueur2] [jouer3] ... : faire des équipes aléatoirement. On peut utiliser les variables du bot pour renseigner les pseudos\n"
 		msg += f"exemple : !teams 2;2;2 $joueur1 $joueur2 $joueur3 $joueur4 $joueur5 $joueur6\n"
 		msg += f"- !kw [jeu] [mot-clé] : ajouter un mot-clé à un jeu\n"
+		msg += f"- !news : faire en sorte que le bot fasse une annonce dans le channel \"annonces-bot\" (je vais te poser les questions nécessaires, laisse-toi guider ;) ) Si tu fais une erreur lors de la création de l'annonce tu auras l'occasion de l'annuler avant que je ne l'envoie à la fin de mes questions.\n"
+		msg += f"- !clean : vider les channels \"bienvenue\", \"annonces-bot\" et \"info-du-bot\"\n"
 		msg += f"- !kill : éteindre le bot\n"
 	msg += f"- !dé [n] : lancer un dé à n faces\n"
 
