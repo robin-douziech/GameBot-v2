@@ -269,6 +269,8 @@ async def on_raw_reaction_remove(payload) :
 
 	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
+	bot.log(f"author: {author}")
+
 	if not(author.bot) :
 
 		if message.author.bot :
