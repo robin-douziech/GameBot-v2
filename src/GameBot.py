@@ -1,6 +1,7 @@
 from discord.ext import commands, tasks
 import discord, json, logging, random, os, calendar, copy
 import datetime as dt
+import matplotlib.pyplot as plt
 
 from variables import *
 

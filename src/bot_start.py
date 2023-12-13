@@ -354,6 +354,15 @@ async def clock() :
 
 	time = f"{hours}:{minutes}"
 
+	for poll_id in bot.polls :
+		if f"{day}/{month}/{year} {time}" == re.split(r".{2}/.{2}/.{2} .{2}:.{2}", bot.polls[poll_id]["end_date"])[1] :
+			msg = f"Voici les résultats du sondage :"#TODO
+			x = [len(bot.polls[poll_id]['results'][option]) for option in bot.polls[poll_id]["reactions"]]
+			plt.hist(x)
+			plt.savefig("fig.png")
+			file = discord.File("fig.png")
+			await bot.channels["colocation"].send(msg, file=file)
+
 	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
 		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
 
