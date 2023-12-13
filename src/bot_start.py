@@ -269,8 +269,6 @@ async def on_raw_reaction_remove(payload) :
 
 	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
-	bot.log(f"author: {author}")
-
 	if not(author.bot) :
 
 		if message.author.bot :
@@ -306,8 +304,11 @@ async def on_raw_reaction_remove(payload) :
 			else: 
 				for poll_id in bot.polls :
 					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
-						bot.polls[poll_id]["results"][payload.emoji.name].remove(f"{author.name}#{author.discriminator}")
-						bot.write_json(bot.polls, bot.polls_file)
+						try :
+							bot.polls[poll_id]["results"][payload.emoji.name].remove(f"{author.name}#{author.discriminator}")
+							bot.write_json(bot.polls, bot.polls_file)
+						except :
+							pass
 
 
 		else :
