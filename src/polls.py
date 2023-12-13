@@ -46,7 +46,7 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 					msg = f"Voici les résultats du sondage :\n"
 					for i in range(1, len(bot.polls[poll_id]["reactions"])) :
 						msg += f"**{i}**: {bot.polls[poll_id]['reactions'][i-1]} / "
-					msg += f"**{len(bot.polls[poll_id]["reactions"])}**: {bot.polls[poll_id]['reactions'][len(bot.polls[poll_id]["reactions"])-1]}\n"
+					msg += f"**{len(bot.polls[poll_id]['reactions'])}**: {bot.polls[poll_id]['reactions'][len(bot.polls[poll_id]['reactions'])-1]}\n"
 					poll_results(poll_id)
 					file = discord.File(f'poll_{poll_id}.png')
 					await author.dm_channel.send(msg, file=file)
