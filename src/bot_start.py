@@ -240,8 +240,14 @@ async def on_raw_reaction_add(payload) :
 			else :
 				for poll_id in bot.polls :
 					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
-						bot.polls[poll_id]["results"][payload.emoji.name].append(f"{author.name}#{author.discriminator}")
-						bot.write_json(bot.polls, bot.polls_file)
+						if not(has_voted(poll_id, f"{author.name}#{author.discriminator}")) :
+							bot.polls[poll_id]["results"][payload.emoji.name].append(f"{author.name}#{author.discriminator}")
+							bot.write_json(bot.polls, bot.polls_file)
+						else :
+							for reaction in message.reactions :
+								if reaction.emoji == payload.emoji.name :
+									Member = bot.fetch_member(f"{author.name}#{author.discriminator}")
+									await reaction.remove(Member)
 
 		else :
 			if channel == author.dm_channel :
@@ -353,12 +359,10 @@ async def clock() :
 		hours = f"0{hours}"
 
 	time = f"{hours}:{minutes}"
-	bot.log(f"time: {day}/{month}/{year} {time}")
 
 	polls_to_delete = []
 	for poll_id in bot.polls :
 		if bot.polls[poll_id]["creation_finished"] :
-			bot.log(re.match(r"(.{2}/.{2}/.{2} .{2}:.{2})", bot.polls[poll_id]["end_date"]).group(1))
 			if f"{day}/{month}/{year} {time}" == re.match(r"(.{2}/.{2}/.{2} .{2}:.{2})", bot.polls[poll_id]["end_date"]).group(1) :
 				msg = f"Voici les résultats du sondage :\n"
 				for i in range(1, len(bot.polls[poll_id]['reactions'])+1) :

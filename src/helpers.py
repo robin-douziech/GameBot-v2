@@ -54,3 +54,9 @@ def poll_results(poll_id) :
 	ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
 	ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
 	plt.savefig(f"poll_{poll_id}.png")
+
+def has_voted(poll_id, member) :
+	for reaction_name in bot.polls[str(poll_id)]['reactions'] :
+		if member in bot.polls[str(poll_id)]['results'][reaction_name] :
+			return True
+	return False
