@@ -155,6 +155,12 @@ async def rankdelete_gamebot(ctx, *args, **kwargs) :
 	bot.write_json(bot.rankings, bot.rankings_file)
 	await author.dm_channel.send("C'est bon ! J'ai supprimé les classements.")
 
+@bot.command(name="clean")
+@bot.dm_command
+@bot.colocataire_command
+async def clean_gamebot(ctx, *args, **kwargs) :
+	for channel_name in ["bienvenue", "général-annonces", "colocation"] :
+		await bot.channels[channel_name].purge()
 
 @bot.command(name="kill")
 @bot.dm_command
