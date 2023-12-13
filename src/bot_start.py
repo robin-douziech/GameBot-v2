@@ -357,20 +357,21 @@ async def clock() :
 
 	for poll_id in bot.polls :
 		bot.log(re.match(r"(.{2}/.{2}/.{2} .{2}:.{2})", bot.polls[poll_id]["end_date"]).group(1))
-		if f"{day}/{month}/{year} {time}" == re.match(r"(.{2}/.{2}/.{2} .{2}:.{2})", bot.polls[poll_id]["end_date"]).group(1) :
-			msg = f"Voici les résultats du sondage :\n"
-			for i in range(1, len(bot.polls[poll_id]['reactions'])+1) :
-				msg += f"**{i}**: {bot.polls[poll_id]['reactions'][i-1]} / "
-			msg = f"{msg[:-3]}\n"
-			poll_results(poll_id)
-			file = discord.File(f"poll_{poll_id}.png")
-			if not(bot.polls[poll_id]["end_date"].endswith(" N")) :
-				channel = bot.guild.get_channel(bot.polls[poll_id]['channel_id'])
-				message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
-				await message.reply(msg, file=file)
-			await bot.channels["colocation"].send(msg, file=file)
-			bot.polls.pop(poll_id)
-			bot.write_json(bot.polls, bot.polls_file)
+		if bot.polls[poll_id]["creation_finished"] :
+			if f"{day}/{month}/{year} {time}" == re.match(r"(.{2}/.{2}/.{2} .{2}:.{2})", bot.polls[poll_id]["end_date"]).group(1) :
+				msg = f"Voici les résultats du sondage :\n"
+				for i in range(1, len(bot.polls[poll_id]['reactions'])+1) :
+					msg += f"**{i}**: {bot.polls[poll_id]['reactions'][i-1]} / "
+				msg = f"{msg[:-3]}\n"
+				poll_results(poll_id)
+				file = discord.File(f"poll_{poll_id}.png")
+				if not(bot.polls[poll_id]["end_date"].endswith(" N")) :
+					channel = bot.guild.get_channel(bot.polls[poll_id]['channel_id'])
+					message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
+					await message.reply(msg, file=file)
+				#await bot.channels["colocation"].send(msg, file=file)
+				bot.polls.pop(poll_id)
+				bot.write_json(bot.polls, bot.polls_file)
 
 	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
 		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
