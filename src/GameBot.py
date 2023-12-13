@@ -514,7 +514,16 @@ class GameBot(commands.Bot):
 						self.write_json(self.polls, self.polls_file)
 						self.write_json(self.members, self.members_file)
 						if self.polls[str(poll_id)]["confirmation"] == "oui" :
-							message = await self.channels["général-annonces"].send(self.polls[str(poll_id)]["text_poll"])
+							if re.match(r"^oui:[1-9][0-9]*$", self.polls[str(poll_id)]["soirée?"]) :
+								try :
+									event_id = int(self.polls[str(poll_id)]["soirée?"].split(':')[1])
+									channel = self.guild.get_channel(self.events[str(event_id)]["channel_id"])
+								except :
+									self.polls.pop(str(poll_id))
+									self.write_json(self.polls, self.polls_file)
+							else :
+								channel = self.channels["général-annonces"]
+							message = await channel.send(self.polls[str(poll_id)]["text_poll"])
 							self.polls[str(poll_id)]["msg_id"] = message.id
 							self.write_json(self.polls, self.polls_file)
 							for reaction_name in self.polls[str(poll_id)]["reactions"] :

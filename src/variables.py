@@ -180,6 +180,10 @@ poll_creation_questions = {
 		"text": "Envoie-moi le texte du sondage que tu veux créer, puis réagis à ton message avec les réactions à utiliser pour le sondage",
 		"valid_answers": r".*"
 	},
+	"soirée?": {
+		"text": "Ce sondage est-il lié à une soirée ? (si c'est le cas, j'enverrai le sondage dans le channel de cette soirée, sinon, je l'enverrai dans annonces-bot). Envoie-moi \"oui:<id_soirée>\" ou \"non\"",
+		"valid_answers": r"^(non|oui:[1-9][0-9]*)$"
+	},
 	"end_date": {
 		"text": "Donne moi la date de fin du sondage (je pourrai annoncer les résultats à cette date). Ajoute \"N\" à la fin du message pour que je n'annonce pas les résultats. Format: jj/mm/aa hh:mm [N]",
 		"valid_answers": r"^((0[1-9]|[1-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/(2[3-9]|[3-9][0-9]) ([0-1][0-9]|2[0-3]):([0-5][0-9])( N){0,1})$"
