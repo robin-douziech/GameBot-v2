@@ -489,6 +489,9 @@ class GameBot(commands.Bot):
 					await self.send_next_question(author, news_creation_questions)
 
 					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
+						self.members[f"{author.name}#{author.discriminator}"]["news_being_created"] = 0
+						self.members[f"{author.name}#{author.discriminator}"]["questionned_news_creation"] = False
+						self.write_json(self.news, self.news_file)
 						if self.news[str(news_id)]["confirmation"] == "oui" :
 							await self.channels["général-annonces"].send(self.news[str(news_id)]["news"])
 						self.news.pop(str(news_id))
@@ -506,6 +509,10 @@ class GameBot(commands.Bot):
 
 					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
 						self.polls[str(poll_id)]["creation_finished"] = True
+						self.members[f"{author.name}#{author.discriminator}"]["poll_being_created"] = 0
+						self.members[f"{author.name}#{author.discriminator}"]["questionned_poll_creation"] = False
+						self.write_json(self.polls, self.polls_file)
+						self.write_json(self.members, self.members_file)
 						if self.polls[str(poll_id)]["confirmation"] == "oui" :
 							message = await self.channels["général-annonces"].send(self.polls[str(poll_id)]["text_poll"])
 							self.polls[str(poll_id)]["msg_id"] = message.id
@@ -513,5 +520,5 @@ class GameBot(commands.Bot):
 							for reaction_name in self.polls[str(poll_id)]["reactions"] :
 								await message.add_reaction(reaction_name)
 						else :
-							self.pop(str(poll_id))
+							self.polls.pop(str(poll_id))
 							self.write_json(self.polls, self.polls_file)
