@@ -369,6 +369,8 @@ async def clock() :
 				message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
 				await message.reply(msg, file=file)
 			await bot.channels["colocation"].send(msg, file=file)
+			bot.polls.pop(poll_id)
+			bot.write_json(bot.polls, bot.polls_file)
 
 	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
 		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
