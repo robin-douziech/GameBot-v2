@@ -298,7 +298,7 @@ async def on_raw_reaction_remove(payload) :
 			else: 
 				for poll_id in bot.polls :
 					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
-						bot.polls[poll_id]["results"].remove(f"{author.name}#{author.discriminator}")
+						bot.polls[poll_id]["results"].pop(f"{author.name}#{author.discriminator}")
 						bot.write_json(bot.polls, bot.polls_file)
 
 
