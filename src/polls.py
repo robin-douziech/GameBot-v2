@@ -42,6 +42,7 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 		elif str(args[0]) == "read" :
 			if len(args) > 1 :
 				if str(args[1]) in bot.polls :
+					poll_id = str(args[1])
 					msg = f"Voici les résultats du sondage :"
 					x = [len(bot.polls[poll_id]['results'][option]) for option in bot.polls[poll_id]["reactions"]]
 					plt.hist(x)
