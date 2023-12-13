@@ -107,9 +107,12 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 						role_soirees_jeux = await bot.get_role("soirées jeux")
 						Member = bot.fetch_member(str(arg))
 						if Member.get_role(role_soirees_jeux.id) != None :
-							bot.events[str(event_id)]["liste d'attente"].append(str(arg))
-							bot.write_json(bot.events, bot.events_file)
-							await bot.update_invitations_members(event_id)
+							if str(arg) not in bot.events[str(event_id)]["liste d'attente"]+bot.events[str(event_id)]["membres présents"] :
+								bot.events[str(event_id)]["liste d'attente"].append(str(arg))
+								bot.write_json(bot.events, bot.events_file)
+								await bot.update_invitations_members(event_id)
+							else :
+								await author.dm_channel.send(f"{arg} est déjà invité(e) à cette soirée")
 						else :
 							await author.dm_channel.send(f"{arg} ne possède pas le rôle \"soirées jeux\".")
 					else :
