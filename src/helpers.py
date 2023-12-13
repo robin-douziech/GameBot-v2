@@ -39,3 +39,9 @@ async def sync_poll(poll_id) :
 			if member not in reactors_message :
 				bot.polls[str(poll_id)]["results"][reaction_name].remove(member)
 	bot.write_json(bot.polls, bot.polls_file)
+
+def poll_results(poll_id) :
+	x = [len(bot.polls[str(poll_id)]['results'][option]) for option in bot.polls[str(poll_id)]['reactions']]
+	bot.log(f"x: {x}")
+	plt.hist(x)
+	plt.savefig(f"poll_{poll_id}.png")
