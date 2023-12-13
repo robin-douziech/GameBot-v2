@@ -50,6 +50,7 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 					poll_results(poll_id)
 					file = discord.File(f'poll_{poll_id}.png')
 					await author.dm_channel.send(msg, file=file)
+					os.remove(f'poll_{poll_id}.png')
 
 				else :
 					await author.dm_channel.send("Aucun sondage ne porte cet identifiant")

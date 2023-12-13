@@ -370,6 +370,7 @@ async def clock() :
 					channel = bot.guild.get_channel(bot.polls[poll_id]['channel_id'])
 					message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
 					await message.reply(msg, file=file)
+				os.remove(f"poll_{poll_id}.png")
 				#await bot.channels["colocation"].send(msg, file=file)
 				polls_to_delete.append(poll_id)
 
