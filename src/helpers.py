@@ -1,5 +1,11 @@
 from bot import *
 
+def has_voted(poll_id, member) :
+	for reaction_name in bot.polls[str(poll_id)]['reactions'] :
+		if member in bot.polls[str(poll_id)]['results'][reaction_name] :
+			return True
+	return False
+
 async def get_reactors(message, emoji_name) :
 	reactors = []
 	for reaction in message.reactions :
@@ -34,7 +40,13 @@ async def sync_poll(poll_id) :
 		reactors_bot = bot.polls[str(poll_id)]["results"][reaction_name]
 		for member in reactors_message :
 			if member not in reactors_bot :
-				bot.polls[str(poll_id)]["results"][reaction_name].append(member)
+				if not(has_voted(poll_id, member)) :
+					bot.polls[str(poll_id)]["results"][reaction_name].append(member)
+				else :
+					for reaction in message.reactions :
+						if reaction.emoji == reaction_name :
+								Member = bot.fetch_member(member)
+								await reaction.remove(Member)
 		for member in reactors_bot :
 			if member not in reactors_message :
 				bot.polls[str(poll_id)]["results"][reaction_name].remove(member)
@@ -54,9 +66,3 @@ def poll_results(poll_id) :
 	ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
 	ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
 	plt.savefig(f"poll_{poll_id}.png")
-
-def has_voted(poll_id, member) :
-	for reaction_name in bot.polls[str(poll_id)]['reactions'] :
-		if member in bot.polls[str(poll_id)]['results'][reaction_name] :
-			return True
-	return False
