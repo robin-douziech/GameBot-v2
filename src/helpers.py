@@ -51,4 +51,6 @@ def poll_results(poll_id) :
 	for bar in bars :
 		yval = bar.get_height()
 		ax.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 1), ha='center', va='bottom')
+	ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+	ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
 	plt.savefig(f"poll_{poll_id}.png")
