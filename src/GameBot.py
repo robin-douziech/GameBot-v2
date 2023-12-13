@@ -523,6 +523,7 @@ class GameBot(commands.Bot):
 									self.write_json(self.polls, self.polls_file)
 							else :
 								channel = self.channels["général-annonces"]
+							self.polls[str(poll_id)]["channel_id"] = channel.id
 							message = await channel.send(self.polls[str(poll_id)]["text_poll"])
 							self.polls[str(poll_id)]["msg_id"] = message.id
 							self.write_json(self.polls, self.polls_file)

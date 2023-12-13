@@ -26,7 +26,8 @@ async def sync_role(role_name) :
 	bot.write_json(bot.roles, bot.roles_file)
 
 async def sync_poll(poll_id) :
-	message = await bot.channels["général-annonces"].fetch_message(bot.polls[str(poll_id)]["msg_id"])
+	channel = bot.guild.get_channel(bot.polls[str(poll_id)]["channel_id"])
+	message = await channel.fetch_message(bot.polls[str(poll_id)]["msg_id"])
 	for reaction_name in bot.polls[str(poll_id)]["reactions"] :
 		reactors = await get_reactors(message, reaction_name)
 		reactors_message = [f"{reactor.name}#{reactor.discriminator}" for reactor in reactors]

@@ -211,12 +211,6 @@ async def on_raw_reaction_add(payload) :
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
 
-			elif channel == bot.channels["général-annonces"] :
-				for poll_id in bot.polls :
-					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
-						bot.polls[poll_id]["results"][payload.emoji.name].append(f"{author.name}#{author.discriminator}")
-						bot.write_json(bot.polls, bot.polls_file)
-
 			elif channel == author.dm_channel :
 				if message.content == dm_welcome_msg and payload.emoji.name == chr(0x1F197) :
 					await bot.send_welcome_message_in_channel(author)
@@ -242,6 +236,13 @@ async def on_raw_reaction_add(payload) :
 							bot.write_json(bot.events, bot.events_file)
 						except :
 							await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+			
+			else :
+				for poll_id in bot.polls :
+					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
+						bot.polls[poll_id]["results"][payload.emoji.name].append(f"{author.name}#{author.discriminator}")
+						bot.write_json(bot.polls, bot.polls_file)
+
 		else :
 			if channel == author.dm_channel :
 				if author.get_role(role_colocataire.id) != None :
@@ -294,11 +295,12 @@ async def on_raw_reaction_remove(payload) :
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
 
-			elif channel == bot.channels["général-annonces"] :
+			else: 
 				for poll_id in bot.polls :
 					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
 						bot.polls[poll_id]["results"].remove(f"{author.name}#{author.discriminator}")
 						bot.write_json(bot.polls, bot.polls_file)
+
 
 		else :
 			if channel == author.dm_channel :

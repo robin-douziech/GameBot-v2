@@ -17,9 +17,11 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 					id_number += 1
 				bot.polls[str(id_number)] = {
 					"text_poll": "",
+					"soirée?": "",
 					"end_date": "",
 					"confirmation": "",
 
+					"channel_id": 0,
 					"reactions": [],
 					"results": {},
 					"msg_id": 0,
