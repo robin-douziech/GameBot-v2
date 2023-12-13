@@ -44,10 +44,8 @@ async def poll_gamebot(ctx, *args, **kwargs) :
 				if str(args[1]) in bot.polls :
 					poll_id = str(args[1])
 					msg = f"Voici les résultats du sondage :"
-					x = [len(bot.polls[poll_id]['results'][option]) for option in bot.polls[poll_id]["reactions"]]
-					plt.hist(x)
-					plt.savefig('fig.png')
-					file = discord.File('fig.png')
+					poll_results(poll_id)
+					file = discord.File(f'poll_{poll_id}.png')
 					await bot.channels["colocation"].send(msg, file=file)
 
 				else :
