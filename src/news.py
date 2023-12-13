@@ -8,7 +8,7 @@ async def news_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 
 	if bot.members[f"{author.name}#{author.discriminator}"]["questions"] == [] :
-		id_number = 1 :
+		id_number = 1
 		while str(id_number) in bot.news :
 			id_number += 1
 		bot.news[str(id_number)] = {
