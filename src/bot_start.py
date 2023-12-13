@@ -356,7 +356,7 @@ async def clock() :
 	bot.log(f"time: {day}/{month}/{year} {time}")
 
 	for poll_id in bot.polls :
-		bot.log(re.split(r"^.{2}/.{2}/.{2} .{2}:.{2}$", bot.polls[poll_id]["end_date"])[1])
+		bot.log(re.split(r"^.{2}/.{2}/.{2} .{2}:.{2}$", bot.polls[poll_id]["end_date"]))
 		if f"{day}/{month}/{year} {time}" == re.split(r"^.{2}/.{2}/.{2} .{2}:.{2}$", bot.polls[poll_id]["end_date"])[1] :
 			msg = f"Voici les résultats du sondage :\n"
 			for i in range(1, len(bot.polls[poll_id]['reactions'])+1) :
