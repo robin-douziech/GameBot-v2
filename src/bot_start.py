@@ -367,7 +367,7 @@ async def clock() :
 			if not(bot.polls[poll_id]["end_date"].endswith(" N")) :
 				channel = bot.guild.get_channel(bot.polls[poll_id]['channel_id'])
 				message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
-				await msg.reply(msg, file=file)
+				await message.reply(msg, file=file)
 			await bot.channels["colocation"].send(msg, file=file)
 
 	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
