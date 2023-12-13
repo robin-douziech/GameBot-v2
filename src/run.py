@@ -161,6 +161,8 @@ async def rankdelete_gamebot(ctx, *args, **kwargs) :
 async def clean_gamebot(ctx, *args, **kwargs) :
 	for channel_name in ["bienvenue", "général-annonces", "colocation"] :
 		await bot.channels[channel_name].purge()
+	bot.polls = {}
+	bot.write_json(bot.polls, bot.polls_file)
 
 @bot.command(name="kill")
 @bot.dm_command
