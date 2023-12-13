@@ -92,7 +92,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 		else : # recherche de jeux par le début du nom (si plusieurs jeux matchent : liste des noms / si un seul jeu match : toutes les infos)
 			games_dic = bot.find_games_by_name(str(args[0]))
 			if len(games_dic) == 0 :
-				msg = f"Je n'ai trouvé aucun jeu dont le nom commence par \"{args[0]}\". Vérifie l'orthographe du nom du jeu que tu cherches et fais bien attention à mettre des guillemets si le nom contient des espaces.\n"
+				msg = f"Je n'ai trouvé aucun jeu dont le nom contient \"{args[0]}\". Vérifie l'orthographe du nom du jeu que tu cherches et fais bien attention à mettre des guillemets si le nom contient des espaces.\n"
 			else :
 				if len(games_dic) == 1 :
 					game = games_dic[list(games_dic.keys())[0]]
@@ -106,7 +106,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 						msg += f"__Mots-clés__ : {' - '.join(game['keywords'].split(';'))}\n"
 					msg += f"__Règles du jeu__ : {game['rules']}\n"
 				else :
-					msg = f"J'ai trouvé plusieurs jeux dont le nom commence par \"{args[0]}\" :\n"
+					msg = f"J'ai trouvé plusieurs jeux dont le nom contient \"{args[0]}\" :\n"
 					for game in games_dic :
 						msg += f"- {game}\n"
 			msg_list = bot.divide_message(msg)

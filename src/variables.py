@@ -6,6 +6,8 @@ roles_json = "json/roles.json"
 events_json = "json/events.json"
 games_json = "json/games.json"
 rankings_json = "json/rankings.json"
+polls_json = "json/polls.json"
+news_json = "json/news.json"
 
 bot_guild_id = 1099428860514271282
 
@@ -170,5 +172,28 @@ game_creation_questions = {
 	"rules": {
 		"text": "Donne-moi un lien vers les règles du jeu.",
 		"valid_answers": r".*"
+	}
+}
+
+poll_creation_questions = {
+	"poll": {
+		"text": "Envoie-moi le texte du sondage que tu veux créer, puis réagis à ton message avec les réactions à utiliser pour le sondage",
+		"valid_answers": r".*"
+	},
+	"envoi": {
+		"text": "Quand tu as finis d'ajouter les réactions à ton message, envoie-moi \"envoyer\" pour que j'envoie le sondage dans le serveur.",
+		"valid_answers": r"^(envoyer)$"
+	}
+	
+}
+
+news_creation_questions = {
+	"news": {
+		"text": "Écris l'annonce que tu souhaites que je fasse",
+		"valid_answers": r".*"
+	},
+	"confirmation": {
+		"text": "Confirme-moi que tu veux vraiment faire cette annonce et que tu n'as pas fait d'erreur (oui/non)",
+		"valid_answers": r"^(oui|non)$"
 	}
 }

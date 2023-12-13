@@ -25,6 +25,10 @@ async def on_ready():
 		bot.games = json.load(f)
 	with open(bot.rankings_file, "rt") as f :
 		bot.rankings = json.load(f)
+	with open(bot.polls_file, "rt") as f :
+		bot.polls = json.load(f)
+	with open(bot.news_file, "rt") as f :
+		bot.news = json.load(f)
 
 	for elt in ["msgid_to_eventid"] :
 		if not(elt in bot.vars) :
@@ -89,8 +93,12 @@ async def on_ready():
 		if member.get_role(role.id) != None :
 			bot.members[f"{member.name}#{member.discriminator}"]["event_being_created"] = 0
 			bot.members[f"{member.name}#{member.discriminator}"]["game_being_created"] = 0
+			bot.members[f"{member.name}#{member.discriminator}"]["poll_being_created"] = 0
+			bot.members[f"{member.name}#{member.discriminator}"]["news_being_created"] = 0
 			bot.members[f"{member.name}#{member.discriminator}"]["questionned_event_creation"] = False
 			bot.members[f"{member.name}#{member.discriminator}"]["questionned_game_creation"] = False
+			bot.members[f"{member.name}#{member.discriminator}"]["questionned_poll_creation"] = False
+			bot.members[f"{member.name}#{member.discriminator}"]["questionned_news_creation"] = False
 			bot.members[f"{member.name}#{member.discriminator}"]["questions"] = []
 	bot.write_json(bot.members, bot.members_file)
 

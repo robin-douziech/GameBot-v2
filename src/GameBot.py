@@ -25,7 +25,7 @@ def strcmp(str1, str2, aplhabet) :
 
 class GameBot(commands.Bot):
 
-	def __init__(self, vars_file, members_file, roles_file, events_file, games_file, rankings_file, *args, **kwargs):
+	def __init__(self, vars_file, members_file, roles_file, events_file, games_file, rankings_file, polls_file, news_file, *args, **kwargs):
 		super(GameBot, self).__init__(command_prefix="!", intents=discord.Intents.all(), *args, **kwargs)
 
 		self.guild = None
@@ -49,6 +49,12 @@ class GameBot(commands.Bot):
 
 		self.rankings_file = rankings_file
 		self.rankings = {}
+
+		self.polls_file = polls_file
+		self.polls = {}
+
+		self.news_file = news_file
+		self.news = {}
 
 	def dm_command(self, function) :
 		async def wrapper(ctx, *args, **kwargs) :
@@ -389,7 +395,7 @@ class GameBot(commands.Bot):
 
 	def divide_message(self, message) :
 		lines = message.split("\n")
-		for i in range(len(lines)) :
+		for i in range(len(lines)-1) :
 			if lines[i] == "" :
 				lines[i] = "\u200B"
 		msg_list = []
@@ -464,6 +470,20 @@ class GameBot(commands.Bot):
 						self.members[f"{author.name}#{author.discriminator}"]["questionned_game_creation"] = False
 						self.write_json(self.members, self.members_file)
 						await author.dm_channel.send("Jeu créé avec succès !")
+
+			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_news_creation"] :
+				if self.answer_is_valid(author, message.content, news_creation_questions) :
+					news_id = self.members[f"{author.name}#{author.discriminator}"]["news_being_created"]
+					question = self.members[f"{author.name}#{author.discriminator}"]["questions"][0]
+					self.news[str(news_id)][question] = message.content
+					self.write_json(self.news, self.news_file)
+					await self.send_next_question(author, news_creation_questions)
+
+					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
+						if self.news[str(news_id)]["confirmation"] == "oui" :
+							await self.channels["général-annonces"].send(self.news[str(news_id)]["news"])
+						self.news.pop(str(news_id))
+						self.write_json(self.news, self.news_file)
 
 
 

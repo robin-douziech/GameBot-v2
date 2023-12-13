@@ -1,4 +1,4 @@
-from rankings import *
+from news import *
 
 @bot.command(name="help")
 @bot.dm_command
@@ -30,7 +30,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 	msg += f"- !game -cat [category] : obtenir la liste des jeux d'une catégorie (les différenres catégories sont : "+", ".join(games_categories[:-1])+f" et {games_categories[-1]})\n"
 	msg += f"- !game -kw [keyword(s)] : rechercher les jeux possédant certains mots-clé. Tu recevra la liste des jeux possédant tous les mots-clé renseignés.\n"
 	msg += f"  Les différents mots-clé existant sont : {' - '.join(keywords)}\n"
-	msg += f"- !game [name] : rechercher les jeux dont le nom commence par \"name\". Si plusieurs jeux sont trouvé, tu obtiendras la liste de leurs noms. Si un seul jeu correspond, tu obtiendras davantage d'informations sur ce jeu\n"
+	msg += f"- !game [name] : rechercher les jeux dont le nom contient \"name\". Si plusieurs jeux sont trouvé, tu obtiendras la liste de leurs noms. Si un seul jeu correspond, tu obtiendras davantage d'informations sur ce jeu\n"
 	msg += f"- !game : obtenir la liste complète des jeux présents dans ma base de données\n"
 
 	msg += "\n"
