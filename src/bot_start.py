@@ -356,11 +356,16 @@ async def clock() :
 
 	for poll_id in bot.polls :
 		if f"{day}/{month}/{year} {time}" == re.split(r".{2}/.{2}/.{2} .{2}:.{2}", bot.polls[poll_id]["end_date"])[1] :
-			msg = f"Voici les résultats du sondage :"#TODO
-			x = [len(bot.polls[poll_id]['results'][option]) for option in bot.polls[poll_id]["reactions"]]
-			plt.hist(x)
-			plt.savefig("fig.png")
-			file = discord.File("fig.png")
+			msg = f"Voici les résultats du sondage :\n"
+			for i in range(1, len(bot.polls[poll_id]['reactions'])+1) :
+				msg += f"**{i}**: {bot.polls[poll_id]['reactions'][i-1]} / "
+			msg = f"{msg[:-3]}\n"
+			poll_results(poll_id)
+			file = discord.File(f"poll_{poll_id}.png")
+			if not(bot.polls[poll_id]["end_date"].endswith(" N")) :
+				channel = bot.guild.get_channel(bot.polls[poll_id]['channel_id'])
+				message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
+				await msg.reply(msg, file=file)
 			await bot.channels["colocation"].send(msg, file=file)
 
 	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
