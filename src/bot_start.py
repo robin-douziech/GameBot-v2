@@ -112,6 +112,10 @@ async def on_ready():
 	for role_name in bot.roles["roles_dic"] :
 		await sync_role(role_name)
 
+	# synchronisation des résultats des sondages
+	for poll_id in bot.polls :
+		await sync_poll(poll_id)
+
 	game_list = []
 	for category in games_categories :
 		game_list += list(bot.games[category].keys())
@@ -207,6 +211,12 @@ async def on_raw_reaction_add(payload) :
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
 
+			elif channel == bot.channels["général-annonces"] :
+				for poll_id in bot.polls :
+					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
+						bot.polls[poll_id]["results"][payload.emoji.name].append(f"{author.name}#{author.discriminator}")
+						bot.write_json(bot.polls, bot.polls_file)
+
 			elif channel == author.dm_channel :
 				if message.content == dm_welcome_msg and payload.emoji.name == chr(0x1F197) :
 					await bot.send_welcome_message_in_channel(author)
@@ -236,8 +246,9 @@ async def on_raw_reaction_add(payload) :
 			if channel == author.dm_channel :
 				if author.get_role(role_colocataire.id) != None :
 					for poll_id in bot.polls :
-						if message.id == bot.polls[poll_id]["dm_msg_id"] :
+						if message.id == bot.polls[poll_id]["dm_msg_id"] and not(bot.polls[poll_id]["creation_finished"]) :
 							bot.polls[poll_id]["reactions"].append(payload.emoji.name)
+							bot.polls[poll_id]["results"][payload.emoji.name] = []
 							bot.write_json(bot.polls, bot.polls_file)
 
 @bot.event
@@ -282,12 +293,20 @@ async def on_raw_reaction_remove(payload) :
 								await bot.update_invitations_roles(event_id)
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")
+
+			elif channel == bot.channels["général-annonces"] :
+				for poll_id in bot.polls :
+					if message.id == bot.polls[poll_id]["msg_id"] and payload.emoji.name in bot.polls[poll_id]["reactions"] :
+						bot.polls[poll_id]["results"].remove(f"{author.name}#{author.discriminator}")
+						bot.write_json(bot.polls, bot.polls_file)
+
 		else :
 			if channel == author.dm_channel :
 				if author.get_role(role_colocataire.id) != None :
 					for poll_id in bot.polls :
-						if message.id == bot.polls[poll_id]["dm_msg_id"] :
+						if message.id == bot.polls[poll_id]["dm_msg_id"] and not(bot.polls[poll_id]["creation_finished"]) :
 							bot.polls[poll_id]["reactions"].remove(payload.emoji.name)
+							bot.polls[poll_id]["results"].pop(payload.emoji.name)
 							bot.write_json(bot.polls, bot.polls_file)
 
 @bot.event

@@ -24,3 +24,17 @@ async def sync_role(role_name) :
 	for member in role.members :
 		bot.roles["roles_dic"][role_name]["members"].append(f"{member.name}#{member.discriminator}")
 	bot.write_json(bot.roles, bot.roles_file)
+
+async def sync_poll(poll_id) :
+	message = await bot.channels["général-annonces"].fetch_message(bot.polls[str(poll_id)]["msg_id"])
+	for reaction_name in bot.polls[str(poll_id)]["reactions"] :
+		reactors = await get_reactors(message, reaction_name)
+		reactors_message = [f"{reactor.name}#{reactor.discriminator}" for reactor in reactors]
+		reactors_bot = bot.polls[str(poll_id)]["results"][reaction_name]
+		for member in reactors_message :
+			if member not in reactors_bot :
+				bot.polls[str(poll_id)]["results"][reaction_name].append(member)
+		for member in reactors_bot :
+			if member not in reactors_message :
+				bot.polls[str(poll_id)]["results"][reaction_name].remove(member)
+	bot.write_json(bot.polls, bot.polls_file)
