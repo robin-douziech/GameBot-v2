@@ -41,7 +41,14 @@ async def sync_poll(poll_id) :
 	bot.write_json(bot.polls, bot.polls_file)
 
 def poll_results(poll_id) :
-	x = [len(bot.polls[str(poll_id)]['results'][option]) for option in bot.polls[str(poll_id)]['reactions']]
-	bot.log(f"x: {x}")
-	plt.hist(x)
+	labels = range(1, len(bot.polls[str(poll_id)]['reactions'])+1)
+	data = [len(bot.polls[str(poll_id)]['results'][option]) for option in bot.polls[str(poll_id)]['reactions']]
+	fig, ax = plt.subplots()
+	bars = ax.bar(labels, data, color="blue")
+	ax.set_xlabel('Options')
+	ax.set_ylabel('Nombre de réponses')
+	ax.set_title('Résultats du sondage')
+	for bar in bars :
+		yval = bar.get_height()
+		ax.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 1), ha='center', va='bottom')
 	plt.savefig(f"poll_{poll_id}.png")
