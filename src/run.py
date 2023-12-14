@@ -208,10 +208,10 @@ async def logs_gamebot(ctx, *args, **kwargs) :
 
 	try :
 		with open(f"logs/20{year}/{month}/{day}.log", "rt") as f :
-			msg = f.readlines()
+			msg = f.read().split('\n')
 			if len(msg) > 10 :
 				msg = msg[-10:]
-			msg = f"{line for line in msg}"
+			msg = f"{line for line in msg}\n"
 		await author.dm_channel.send(f"```\n{msg}\n```")
 	except :
 		pass
