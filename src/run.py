@@ -163,13 +163,58 @@ async def json_gamebot(ctx, *args, **kwargs) :
 	if len(args) > 0 :
 		try :
 			with open(f"json/{args[0]}.json", "rt") as f :
-				json_msg = json.load(f)
-				json_object = json.dumps(json_msg, index=1)
-			await author.dm_channel.send(f"```json\n{json_object}\n```")
+				json_msg = r.read()
+			await author.dm_channel.send(f"```json\n{json_msg}\n```")
 		except :
 			pass
 	else :
-		await author.dm_channel.send("Tu dois préciser le fichier json à lire")	
+		await author.dm_channel.send("Tu dois préciser le fichier json à lire")
+
+@bot.command(name="logs")
+@bot.dm_command
+@bot.colocataire_command
+async def logs_gamebot(ctx, *args, **kwargs) :
+	author = bot.guild.get_member(ctx.author.id)
+
+	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
+	date = now.split()[0]
+	time = now.split()[1]
+
+	day = date.split('/')[0]
+	month = date.split('/')[1]
+	year = date.split('/')[2]
+
+	hours = time.split(':')[0]
+	minutes = time.split(':')[1]
+
+	if (int(hours)+int(bot.vars['clock_hour_offset'])) > 23 :
+		day = str(int(day)+1)
+		if len(day) < 2 :
+			day = f"0{day}"
+		if int(day) > int(calendar.monthrange(int(year), int(month))[1]) :
+			day = "01"
+			month = str(int(month)+1)
+			if len(month) < 2 :
+				month = f"0{month}"
+			if int(month) > 12 :
+				month = "01"
+				year = str(int(year)+1)
+
+	hours = str((int(hours)+int(bot.vars['clock_hour_offset']))%24)
+	if len(hours) < 2 :
+		hours = f"0{hours}"
+
+	time = f"{hours}:{minutes}"
+
+	try :
+		with open(f"logs/20{year}/{month}/{day}.log", "rt") as f :
+			msg = f.readlines()
+			if len(msg) > 10 :
+				msg = msg[-10:]
+			msg = f"{line for line in msg}"
+		await author.dm_channel.send("```\n{msg}\n```")
+	except :
+		pass
 
 @bot.command(name="clean")
 @bot.dm_command
