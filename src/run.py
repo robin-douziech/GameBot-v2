@@ -163,7 +163,7 @@ async def json_gamebot(ctx, *args, **kwargs) :
 	if len(args) > 0 :
 		try :
 			with open(f"json/{args[0]}.json", "rt") as f :
-				json_msg = r.read()
+				json_msg = f.read()
 			await author.dm_channel.send(f"```json\n{json_msg}\n```")
 		except :
 			pass
