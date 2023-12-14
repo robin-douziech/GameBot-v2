@@ -369,6 +369,13 @@ class GameBot(commands.Bot):
 
 	async def remove_guest_from_event_members(self, event_id, member) :
 		try :
+			msgid_to_remove = []
+			for msg_id in self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'] :
+				if self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'][msg_id] == str(event_id) :
+					msgid_to_remove.append(msg_id)
+			for msg_id in msgid_to_remove :
+				self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'].pop(msg_id)
+			self.write_json(self.members, self.members_file)				
 			if f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["liste d'attente"] :
 				self.events[str(event_id)]["liste d'attente"].remove(f"{member.name}#{member.discriminator}")
 			elif f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["membres en attente"] :
@@ -376,7 +383,7 @@ class GameBot(commands.Bot):
 			elif f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["membres présents"] :
 				self.events[str(event_id)]["membres présents"].remove(f"{member.name}#{member.discriminator}")
 			else :
-				raise Exception()
+				raise Exception("")
 			self.write_json(self.events, self.events_file)
 			role = await self.get_role(str(event_id))
 			await member.remove_roles(role)

@@ -220,8 +220,8 @@ async def on_raw_reaction_add(payload) :
 							event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"][str(message.id)]
 							event = bot.events[str(event_id)]		
 							if payload.emoji.name == chr(0x2705) : # accepter
-								bot.events[str(event_id)]["membres présents"].append(f"{author.name}#{author.discriminator}")
 								bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
+								bot.events[str(event_id)]["membres présents"].append(f"{author.name}#{author.discriminator}")
 								role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
 								await author.add_roles(role)
 								await author.dm_channel.send("Génial ! Heureux de te savoir parmi nous lors de cette soirée :slight_smile:")
