@@ -212,7 +212,7 @@ async def logs_gamebot(ctx, *args, **kwargs) :
 			if len(msg) > 10 :
 				msg = msg[-10:]
 			msg = f"{line for line in msg}"
-		await author.dm_channel.send("```\n{msg}\n```")
+		await author.dm_channel.send(f"```\n{msg}\n```")
 	except :
 		pass
 
