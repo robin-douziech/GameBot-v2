@@ -83,7 +83,8 @@ async def on_ready():
 	for member in bot.members :
 		msgid_to_remove = []
 		for msg_id in bot.members[member]["msgid_to_eventid"] :
-			if bot.members[member]["msgid_to_eventid"][msg_id] not in bot.events :
+			event_id = bot.members[member]["msgid_to_eventid"][msg_id]
+			if event_id not in bot.events or member not in bot.events[event_id]["liste d'attente"]+bot.events[event_id]["membres en attente"]+bot.events[event_id]["membres présents"] :
 				msgid_to_remove.append(msg_id)
 		for msg_id in msgid_to_remove :
 			bot.members[member]["msgid_to_eventid"].pop(msg_id)
