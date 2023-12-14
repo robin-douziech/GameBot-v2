@@ -369,7 +369,14 @@ class GameBot(commands.Bot):
 
 	async def remove_guest_from_event_members(self, event_id, member) :
 		try :
-			self.events[str(event_id)]["membres présents"].remove(f"{member.name}#{member.discriminator}")
+			if f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["liste d'attente"] :
+				self.events[str(event_id)]["liste d'attente"].remove(f"{member.name}#{member.discriminator}")
+			elif f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["membres en attente"] :
+				self.events[str(event_id)]["membres en attente"].remove(f"{member.name}#{member.discriminator}")
+			elif f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["membres présents"] :
+				self.events[str(event_id)]["membres présents"].remove(f"{member.name}#{member.discriminator}")
+			else :
+				raise Exception()
 			self.write_json(self.events, self.events_file)
 			role = await self.get_role(str(event_id))
 			await member.remove_roles(role)
