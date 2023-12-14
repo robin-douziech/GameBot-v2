@@ -166,7 +166,7 @@ async def json_gamebot(ctx, *args, **kwargs) :
 				json_msg = json.load(f)
 			await author.dm_channel.send(f"```json\n{msg}\n```")
 		except :
-		pass
+			pass
 	else :
 		await author.dm_channel.send("Tu dois préciser le fichier json à lire")	
 
