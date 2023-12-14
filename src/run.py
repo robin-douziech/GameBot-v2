@@ -155,6 +155,21 @@ async def rankdelete_gamebot(ctx, *args, **kwargs) :
 	bot.write_json(bot.rankings, bot.rankings_file)
 	await author.dm_channel.send("C'est bon ! J'ai supprimé les classements.")
 
+@bot.command(name="json")
+@bot.dm_command
+@bot.colocataire_command
+async def json_gamebot(ctx, *args, **kwargs) :
+	author = bot.guild.get_member(ctx.author.id)
+	if len(args) > 0 :
+		try :
+			with open(f"json/{args[0]}.json", "rt") as f :
+				json_msg = json.load(f)
+			await author.dm_channel.send(f"```json\n{msg}\n```")
+		except :
+		pass
+	else :
+		await author.dm_channel.send("Tu dois préciser le fichier json à lire")	
+
 @bot.command(name="clean")
 @bot.dm_command
 @bot.colocataire_command
