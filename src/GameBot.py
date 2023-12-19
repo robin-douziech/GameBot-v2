@@ -314,13 +314,20 @@ class GameBot(commands.Bot):
 		dm_channel = member.dm_channel
 		if dm_channel == None :
 			dm_channel = await member.create_dm()
+		membres_invites = []
+		if self.events[str(event_id)]["nb_max_joueurs"] == "infinity" :
+			membres_invites = self.events[str(event_id)]["membres en attente"]+self.events[str(event_id)]["liste d'attente"]
+		else :
+			membres_invites = (self.events[str(event_id)]["membres en attente"]+self.events[str(event_id)]["liste d'attente"])[:int(self.events[str(event_id)]["nb_max_joueurs"])-len(self.events[str(event_id)]["membres présents"])]
+			#for i in range(int(self.events[str(event_id)]["nb_max_joueurs"])-len(self.events[str(event_id)]["membres présents"])) :
+			#	membres_invites.append(membres[i])
 		message = await dm_channel.send(member_invitation_msg.format(
 			name=self.events[str(event_id)]["name"],
 			description=self.events[str(event_id)]["description"],
 			date = self.events[str(event_id)]["date"],
 			heure = self.events[str(event_id)]["heure"],
 			présents = " ; ".join(self.events[str(event_id)]["membres présents"]), 
-			invités = " ; ".join(self.events[str(event_id)]["membres en attente"])
+			invités = " ; ".join(membres_invites)
 		))
 		await message.add_reaction(chr(0x2705))
 		await message.add_reaction(chr(0x274C))
