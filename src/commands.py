@@ -19,8 +19,9 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !event read [event_id] : obtenir des informations sur une soirée jeux en particulier\n"
 		msg += f"- !event delete [event_id] : supprimer une soirée jeux\n"
 		msg += f"- !invite [event_id] [role] : inviter un role à une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"roles\")\n"
-		msg += f"- !invite [event_id] [pseudo] : inviter un membre à une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"membres\")\n"
+		msg += f"- !invite [event_id] [pseudo] : ajouter un membre à la liste des invités d'une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"membres\"). Cette commande n'envoie pas les invitations.\n"
 		msg += f"- !invite [event_id] [pseudo] delete : supprimer un membres des membres présents à une soirée\n"
+		msg += f"- !send [event_id] : envoyer les invitations à la soirée jeux précisée (uniquement pour les soirées auxquelles on invite des membres)\n"
 		msg += f"\n"
 
 		msg += f"**Gestion des sondages :**\n\n"

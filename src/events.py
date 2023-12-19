@@ -110,7 +110,7 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 							if str(arg) not in bot.events[str(event_id)]["liste d'attente"]+bot.events[str(event_id)]["membres en attente"]+bot.events[str(event_id)]["membres présents"] :
 								bot.events[str(event_id)]["liste d'attente"].append(str(arg))
 								bot.write_json(bot.events, bot.events_file)
-								await bot.update_invitations_members(event_id)
+								#await bot.update_invitations_members(event_id)
 							else :
 								await author.dm_channel.send(f"{arg} est déjà invité(e) à cette soirée")
 						else :
@@ -150,3 +150,22 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 
 	else: 
 		await author.dm_channel.send("Utilisation : !invite event_id pseudo [delete]")
+
+@bot.command(name="send")
+@bot.dm_command
+@bot.colocataire_command
+async def send_gamebot(ctx, *args, **kwargs) :
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 0 :
+		if str(args[0]) in bot.events :
+			if bot.events[str(args[0])]["type_invités"] == "membres" :
+				await bot.update_invitations_members(str(args[0]))
+				await author.dm_channel.send(f"Invitations envoyées pour la soirée \"{bot.events[str(args[0])]['name']}\"")
+			else :
+				await author.dm_channel.send("Cette commande n'est nécessaire que pour les soirées auxquelles on invite des membres")
+		else :
+			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
+	else :
+		await author.dm_channel.send("Tu dois préciser l'identifiant de la soirée pour laquelle je dois envoyer les invitations")
