@@ -169,7 +169,8 @@ class GameBot(commands.Bot):
 		# ajouter le membre au json
 		self.members[f"{member.name}#{member.discriminator}"] = {
 			"name": member.name,
-			"id":   member.discriminator
+			"id":   member.discriminator,
+			"msgid_to_eventid": {}
 		}
 		self.write_json(self.members, self.members_file)
 
