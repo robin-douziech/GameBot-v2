@@ -189,7 +189,7 @@ async def on_raw_reaction_add(payload) :
 
 	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
-	if not(author.bot) :
+	if author is not None and not(author.bot) :
 
 		if message.author.bot :
 
@@ -269,7 +269,7 @@ async def on_raw_reaction_remove(payload) :
 
 	role_colocataire = bot.guild.get_role(bot.roles["roles_ids"]["colocataire"])
 
-	if not(author.bot) :
+	if author is not None and not(author.bot) :
 
 		if message.author.bot :
 
