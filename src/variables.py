@@ -35,7 +35,7 @@ Ici, tu peux décider d'avoir ou non certains rôles du serveur. Réagis à ce m
 - si tu habites à Grenoble ou dans les alentours, tu peux avoir le rôle {grenoble} en réagissant avec :mountain_snow:"""
 
 welcome_msg = "7tadelliens, 7tadelliennes,\n\
-{username} vient de nous rejoindre, faites lui un accueil des plus chaleureux !\n\
+Un nouveau membre vient d'arriver, faites lui un accueil digne de ce nom !\n\
 Bienvenue parmi nous, {username} !"
 
 dm_welcome_msg = "Salut !\n\
