@@ -15,7 +15,6 @@ roles_channel_id = 1179099714025689128
 bienvenue_channel_id = 1179099642634444921
 colocation_channel_id = 1179775060064600164
 general_annonces_channel_id = 1179810037116444802
-test_channel_id = 1182231809426198618
 
 soirees_jeux_cat_id = 1179145721572765706
 

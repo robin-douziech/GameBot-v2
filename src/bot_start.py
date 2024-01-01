@@ -8,7 +8,6 @@ async def on_ready():
 	bot.channels["roles"]     = bot.guild.get_channel(roles_channel_id)
 	bot.channels["colocation"] = bot.guild.get_channel(colocation_channel_id)
 	bot.channels["général-annonces"] = bot.guild.get_channel(general_annonces_channel_id)
-	bot.channels["test"] = bot.guild.get_channel(test_channel_id)
 
 	for role in role_to_channel :
 		bot.channels[role] = bot.guild.get_channel(role_to_channel[role])
@@ -386,13 +385,9 @@ async def clock() :
 		bot.polls.pop(poll_id)
 	bot.write_json(bot.polls, bot.polls_file)
 
-	if (hours in ['22', '23', '24', '00'] and minutes in ['00', '15', '30', '45']) or (hours=='23' and int(minutes)>50) or (hours in ['24', '00'] and int(minutes)<10) :
-		await bot.channels["test"].send(f"Nous sommes le {day}/{month}/{year} et il est {time}")
-
 	if day == "01" and time == "00:00": 
 		bot.archive_rankings()
 		bot.log("Classements archivés")
-		await bot.channels["test"].send("Classements archivés")
 
 	if minutes == "00" :
 		game_list = []
@@ -402,20 +397,17 @@ async def clock() :
 		await bot.change_presence(activity=discord.Game(f"{game}"))
 
 	if time == "00:00" :
-		await bot.channels["test"].send("Changement de jour")
 		bot.log(f"Nouveau jour : nous sommes le {day}/{month}/{year}")
 		if int(day) == 1 :
-			await bot.channels["test"].send("Changement de mois")
 			if int(month) == 1 :
-				await bot.channels["test"].send("Changement d'année")
 				try :
 					os.makedirs(f"logs/20{year}")
 				except :
-					await bot.channels["test"].send("error 1")
+					pass
 			try :
 				os.makedirs(f"logs/20{year}/{month}")
 			except :
-				await bot.channels["test"].send("error 2")
+				pass
 		formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
 		handler = logging.FileHandler(f"logs/20{year}/{month}/{day}.log")
 		handler.setFormatter(formatter)
