@@ -24,6 +24,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 						"duration": "",
 						"keywords": "",
 						"rules": "",
+						"videos": "",
 
 						"creation_finished": False
 					}
@@ -105,6 +106,8 @@ async def game_gamebot(ctx, *args, **kwargs) :
 					if game['keywords'] != "None" :
 						msg += f"__Mots-clés__ : {' - '.join(game['keywords'].split(';'))}\n"
 					msg += f"__Règles du jeu__ : {game['rules']}\n"
+					if "videos" in game and len(game["videos"]) != 0 :
+						msg += f"__Vidéos à propos du jeu__ :\n{game['videos']}\n"
 				else :
 					msg = f"J'ai trouvé plusieurs jeux dont le nom contient \"{args[0]}\" :\n"
 					for game in games_dic :
@@ -124,3 +127,38 @@ async def game_gamebot(ctx, *args, **kwargs) :
 		msg_list = bot.divide_message(msg)
 		for msg in msg_list :
 			await author.dm_channel.send(msg)
+
+@bot.command(name="video")
+@bot.dm_command
+@bot.colocataire_command
+async def video_gamebot(ctx, *args, **kwargs) :
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 0 :
+		games = bot.find_games_by_name(args[0])
+		if len(games) == 0 :
+			await author.dm_channel.send(f"Je n'ai trouvé aucun jeu dont le nom contient \"{args[0]}\"")
+			return
+		elif len(games) == 1 :
+			game = games[list(games.keys())[0]]
+			category = game["category"]
+			if len(args) > 1 :
+				if args[1].startswith("https://") :
+					if not("videos" in bot.games[category][game['name']]) :
+						bot.games[category][game['name']]["videos"] = ""
+					bot.games[category][game['name']]["videos"] += f"{args[1]}\n"
+					bot.write_json(bot.games, bot.games_file)
+					await author.dm_channel.send("La vidéo a été ajoutée avec succès !")
+				elif args[1] == "clear" :
+					bot.games[category][game['name']]["videos"] = ""
+					bot.write_json(bot.games, bot.games_file)
+					await author.dm_channel.send("Les vidéos ont été supprimées avec succès !")
+				else :
+					await author.dm_channel.send(f"\"{args[1]}\" n'est pas un lien.")
+			else :
+				await author.dm_channel.send("Vous devez spécifier l'URL d'une vidéo à ajouter")
+		else :
+			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[0]}\" dans leur nom ({' - '.join(list(games.keys()))}).")
+	else :
+		await author.dm_channel.send("Vous devez préciser un jeu")

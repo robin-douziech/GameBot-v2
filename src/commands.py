@@ -35,6 +35,8 @@ async def help_gamebot(ctx, *args, **kwargs) :
 	if author.get_role(role_colocataire.id) != None :
 		msg += f"- !game create : ajouter un jeu à la base de données (je vais te poser les questions nécessaires, laisse-toi guider ;) )\n"
 		msg += f"- !game delete [name] : supprimer un jeu de la base de données\n"
+		msg += f"- !video [game] [url] : ajouter une vidéo aux vidéos de présentation du jeu (le paramètre game est le nom du jeu, pas forcément en entier tant qu'il permet d'identifier le jeu de menière unique)\n"
+		msg += f"- !video [game] clear : supprimer toutes les vidéos de présentation du jeu\n"
 	msg += f"- !game -cat [category] : obtenir la liste des jeux d'une catégorie (les différenres catégories sont : "+", ".join(games_categories[:-1])+f" et {games_categories[-1]})\n"
 	msg += f"- !game -kw [keyword(s)] : rechercher les jeux possédant certains mots-clé. Tu recevra la liste des jeux possédant tous les mots-clé renseignés.\n"
 	msg += f"  Les différents mots-clé existant sont : {' - '.join(keywords)}\n"
