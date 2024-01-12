@@ -67,6 +67,7 @@ async def on_ready():
 	for member in guild_members :
 		if member not in bot.members :
 			Member = bot.fetch_member(member)
+			print(f"member: {member}")
 			await bot.send_welcome_message_in_dm(Member)
 	members_to_remove = []
 	for member in bot.members :
