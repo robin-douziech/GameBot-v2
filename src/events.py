@@ -61,7 +61,16 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 		if event_id == None :
 			msg = ""
 			for event_id in bot.events :
-				msg += f"{event_id} : {bot.events[event_id]['name']}\n"
+				if bot.events[event_id]["type_invités"] == "membres" :
+					if bot.events[event_id]["nb_max_joueurs"] == "infinity" :
+						msg += f"{event_id} : {bot.events[event_id]['name']} (présents:{len(bot.events[event_id]['membres présents'])} invités:{len(bot.events[event_id]['membres en attente'])})\n"
+					else :
+						msg += f"{event_id} : {bot.events[event_id]['name']} (présents:{len(bot.events[event_id]['membres présents'])}/{bot.events[event_id]['nb_max_joueurs']} invités:{len(bot.events[event_id]['membres en attente'])})\n"
+				else :
+					if bot.events[event_id]["nb_max_joueurs"] == "infinity" :
+						msg += f"{event_id} : {bot.events[event_id]['name']} (présents:{len(bot.events[event_id]['membres présents'])})\n"
+					else :
+						msg += f"{event_id} : {bot.events[event_id]['name']} (présents:{len(bot.events[event_id]['membres présents'])}/{bot.events[event_id]['nb_max_joueurs']})\n"
 			if msg == "" :
 				await author.dm_channel.send("Aucune soirée de prévue pour le moment")
 			else :
