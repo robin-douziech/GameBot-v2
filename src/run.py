@@ -209,8 +209,8 @@ async def logs_gamebot(ctx, nb_lines=10, *args, **kwargs) :
 	try :
 		with open(f"logs/20{year}/{month}/{day}.log", "rt") as f :
 			msg = f.read().split('\n')
-			if len(msg) > nb_lines :
-				msg = msg[-nb_lines:]
+			if len(msg) > int(nb_lines) :
+				msg = msg[-int(nb_lines):]
 			txt = ""
 			for line in msg :
 				txt += f"{line}\n"
