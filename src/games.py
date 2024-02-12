@@ -67,7 +67,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 						if re.match(r"^([0-9]|10)$", args[2]):
 							if not "grades" in bot.games[game["category"]][game["name"]] :
 								bot.games[game["category"]][game["name"]]["grades"] = {}
-							bot.games[game["category"]][game["name"]]["grades"][f"{author.name}#{author.dis}"] = int(args[2])
+							bot.games[game["category"]][game["name"]]["grades"][f"{author.name}#{author.discriminator}"] = int(args[2])
 							bot.write_json(bot.games, bot.games_file)
 							await author.dm_channel.send("Note enregistrée avec succès")
 						else :
