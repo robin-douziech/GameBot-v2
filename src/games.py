@@ -62,7 +62,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 				if len(results) > 1 :
 					await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
 				elif len(results) == 1:
-					game = games_dic[list(games_dic.keys())[0]]
+					game = results[list(results.keys())[0]]
 					if len(args) > 2 :
 						if re.match(r"^([0-9]|10)$", args[2]):
 							if not "grades" in bot.games[game["category"]][game["name"]] :
