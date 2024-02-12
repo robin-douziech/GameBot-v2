@@ -43,7 +43,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 	msg += f"  Les différents mots-clé existant sont : {' - '.join(keywords)}\n"
 	msg += f"- !game [name] : rechercher les jeux dont le nom contient \"name\". Si plusieurs jeux sont trouvé, tu obtiendras la liste de leurs noms. Si un seul jeu correspond, tu obtiendras davantage d'informations sur ce jeu\n"
 	msg += f"- !game : obtenir la liste complète des jeux présents dans ma base de données\n"
-	msg += f"= !game grade [name] [grade] : donner une note à un jeu\n"
+	msg += f"- !game grade [name] [grade] : donner une note à un jeu\n"
 
 	msg += "\n"
 
