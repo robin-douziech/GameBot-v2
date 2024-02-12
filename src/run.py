@@ -164,7 +164,7 @@ async def json_gamebot(ctx, *args, **kwargs) :
 		try :
 			with open(f"json/{args[0]}.json", "rt") as f :
 				json_msg = f.read()
-			msg_list = bot.divide_message(json_msg, wrappers=('```json', '```'))
+			msg_list = bot.divide_message(json_msg, wrappers=('```json\n', '\n```'))
 			for msg in msg_list :
 				await author.dm_channel.send(msg)
 		except :
