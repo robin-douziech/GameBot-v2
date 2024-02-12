@@ -17,7 +17,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !event create : créer une soirée jeux (je vais te poser les questions nécessaires, laisse-toi guider ;) )\n"
 		msg += f"- !event read : obtenir la liste des soirées jeux existantes\n"
 		msg += f"- !event read [event_id] : obtenir des informations sur une soirée jeux en particulier\n"
-		msq +=  "- !event update [event_id] -p [delta] : modifier le nombre maximum d'invités à la soirée (delta=(+|-)N)\n"
+		msg +=  "- !event update [event_id] -p [delta] : modifier le nombre maximum d'invités à la soirée (delta={+|-}N)\n"
 		msg += f"- !event delete [event_id] : supprimer une soirée jeux\n"
 		msg += f"- !invite [event_id] [role] : inviter un role à une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"roles\")\n"
 		msg += f"- !invite [event_id] [pseudo] : ajouter un membre à la liste des invités d'une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"membres\"). Cette commande n'envoie pas les invitations.\n"
