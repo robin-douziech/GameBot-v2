@@ -423,7 +423,7 @@ class GameBot(commands.Bot):
 		else :
 			raise Exception("Invalid role")
 
-	def divide_message(self, message) :
+	def divide_message(self, message, wrappers=('', '')) :
 		lines = message.split("\n")
 		for i in range(len(lines)-1) :
 			if lines[i] == "" :
@@ -431,10 +431,10 @@ class GameBot(commands.Bot):
 		msg_list = []
 		while len(lines) > 0 :
 			current_msg = ""
-			while len(lines) > 0 and len(current_msg+lines[0]) < 2000 :
+			while len(lines) > 0 and len(current_msg+lines[0]+wrappers[0]+wrappers[1]) < 2000 :
 				current_msg += f"{lines[0]}\n"
 				lines.pop(0)
-			msg_list.append(current_msg)
+			msg_list.append(f"{wrappers[0]}{current_msg}{wrappers[1]}")
 		return msg_list
 
 	async def send_next_question(self, member, question_dic) :

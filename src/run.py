@@ -164,7 +164,9 @@ async def json_gamebot(ctx, *args, **kwargs) :
 		try :
 			with open(f"json/{args[0]}.json", "rt") as f :
 				json_msg = f.read()
-			await author.dm_channel.send(f"```json\n{json_msg}\n```")
+			msg_list = bot.divide_message(json_msg, wrappers=('```json', '```'))
+			for msg in msg_list :
+				await author.dm_channel.send(msg)
 		except :
 			pass
 	else :
@@ -214,7 +216,9 @@ async def logs_gamebot(ctx, nb_lines=10, *args, **kwargs) :
 			txt = ""
 			for line in msg :
 				txt += f"{line}\n"
-		await author.dm_channel.send(f"```\n{txt}\n```")
+		msg_list = bot.divide_message(txt, wrappers=('```', '```'))
+		for msg in msg_list :
+			await author.dm_channel.send(msg)
 	except :
 		pass
 
