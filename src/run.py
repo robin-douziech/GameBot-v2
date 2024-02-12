@@ -173,7 +173,7 @@ async def json_gamebot(ctx, *args, **kwargs) :
 @bot.command(name="logs")
 @bot.dm_command
 @bot.colocataire_command
-async def logs_gamebot(ctx, *args, **kwargs) :
+async def logs_gamebot(ctx, nb_lines=10, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 
 	now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
@@ -209,23 +209,14 @@ async def logs_gamebot(ctx, *args, **kwargs) :
 	try :
 		with open(f"logs/20{year}/{month}/{day}.log", "rt") as f :
 			msg = f.read().split('\n')
-			if len(msg) > 10 :
-				msg = msg[-10:]
+			if len(msg) > nb_lines :
+				msg = msg[-nb_lines:]
 			txt = ""
 			for line in msg :
 				txt += f"{line}\n"
 		await author.dm_channel.send(f"```\n{txt}\n```")
 	except :
 		pass
-
-@bot.command(name="clean")
-@bot.dm_command
-@bot.colocataire_command
-async def clean_gamebot(ctx, *args, **kwargs) :
-	for channel_name in ["bienvenue", "général-annonces", "colocation"] :
-		await bot.channels[channel_name].purge()
-	bot.polls = {}
-	bot.write_json(bot.polls, bot.polls_file)
 
 @bot.command(name="kill")
 @bot.dm_command

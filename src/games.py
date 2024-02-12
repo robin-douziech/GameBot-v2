@@ -10,6 +10,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 	if len(args) > 0 :
 
 		if args[0] == "create" :
+
 			if author.get_role(role_colocataire.id) != None :
 				if bot.members[f"{author.name}#{author.discriminator}"]["questions"] == [] :
 					id_number = 1
@@ -42,6 +43,7 @@ async def game_gamebot(ctx, *args, **kwargs) :
 				await author.dm_channel.send("Seuls les @colocataires peuvent ajouter des jeux à ma liste")
 
 		elif args[0] == "delete" :
+
 			if author.get_role(role_colocataire.id) != None :
 				if len(args) > 1 :
 					if bot.delete_game(str(args[1])) :
@@ -52,6 +54,30 @@ async def game_gamebot(ctx, *args, **kwargs) :
 					await author.dm_channel.send("Tu dois préciser le nom du jeu à supprimer")
 			else :
 				await author.dm_channel.send("Seuls les @colocataires peuvent supprimer des jeux de ma liste")
+
+		elif args[0] == "grade" :
+
+			if len(args) > 1 :
+				results = bot.find_games_by_name(str(args[1]))
+				if len(results) > 1 :
+					await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
+				elif len(results) == 1:
+					game = games_dic[list(games_dic.keys())[0]]
+					if len(args) > 2 :
+						if re.match(r"^([0-9]|10)$", args[2]):
+							if not "grades" in bot.games[game["category"]][game["name"]] :
+								bot.games[game["category"]][game["name"]]["grades"] = {}
+							bot.games[game["category"]][game["name"]]["grades"][f"{author.name}#{author.dis}"] = int(args[2])
+							bot.write_json(bot.games, bot.games_file)
+							await author.dm_channel.send("Note enregistrée avec succès")
+						else :
+							await author.dm_channel.send(f"\"{args[2]}\" n'est pas une note valide")
+					else :
+						await author.dm_channel.send("Tu dois préciser la note que tu souhaite donner au jeu (entre 0 et 10 inclus)")
+				else :
+					await author.dm_channel.send(f"Aucun jeu ne contient \"{args[1]}\" dans son titre")
+			else :
+				await author.dm_channel.send("Tu dois préciser le nom du jeu à noter")
 
 		elif args[0] == "-cat" : # recherche de jeux par catégorie (retourne liste des jeux de la catégorie renseignée)
 			if len(args) > 1: 
@@ -99,6 +125,13 @@ async def game_gamebot(ctx, *args, **kwargs) :
 					game = games_dic[list(games_dic.keys())[0]]
 					msg = f"J'ai trouvé le jeu que tu cherche ! Voici quelques informations sur ce jeu :\n"
 					msg += f"__Nom du jeu__ : {game['name']}\n"
+					if "grades" in bot.games[game["category"]][game["name"]] :
+						grade = 0
+						for member in bot.games[game["category"]][game["name"]]["grades"] :
+							grade += int(bot.games[game["category"]][game["name"]]["grades"][member])
+						grade /= len(bot.games[game["category"]][game["name"]]["grades"])
+						grade = round(grade, 2)
+						msg += f"__Note__ : {grade}/10\n"
 					msg += f"__Description__ :\n{game['description']}\n"
 					msg += f"__Nombre de joueurs__ : {game['players_min']} - {game['players_max']}\n"
 					msg += f"__Durée d'une partie__ : {game['duration']}\n"

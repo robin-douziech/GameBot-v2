@@ -85,7 +85,36 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 				await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
 
 	elif crud == "update" :
-		await author.dm_channel.send("pas encore implémenté")
+		if event_id is not None :
+			if len(args) > 0 :
+				if args[0] == "-p":
+					if bot.events[str(event_id)]["nb_max_joueurs"] != "infinity":
+						if len(args) > 1 :
+							if re.match(r"^([+-][1-9][0-9]*)$", args[1]) :
+								if args[1][0] == "+":
+									bot.events[str(event_id)]["nb_max_joueurs"] = str(int(bot.events[str(event_id)]["nb_max_joueurs"]) + int(args[1][1:]))
+									bot.write_json(bot.events, bot.events_file)
+									await author.dm_channel.send("Nombre maximum d'invités modifié avec succès")
+								else :
+									available_places = int(bot.events[str(event_id)]["nb_max_joueurs"]) - len(bot.events[str(event_id)]["membres présents"])
+									if int(args[1][1:]) < available_places :
+										bot.events[str(event_id)]["nb_max_joueurs"] = str(int(bot.events[str(event_id)]["nb_max_joueurs"]) - int(args[1][1:]))
+										bot.write_json(bot.events, bot.events_file)
+										await author.dm_channel.send("Nombre maximum d'invités modifié avec succès")
+									else :
+										await author.dm_channel.send("Tu ne peux pas retirer autant de places : il reste moins de places disponibles que ça")
+							else :
+								await author.dm_channel.send(f"Paramètre {args[1]} incorrect pour l'option -p")
+						else :
+							await author.dm_channel.send("Arguments insuffisants")
+					else :
+						await author.dm_channel.send("Tu ne peux pas modifier le nombre maximum d'invités pour cette soirée.")
+				else :
+					await author.dm_channel.send(f"Option {args[0]} inconue")
+			else :
+				await author.dm_channel.send("Arguments insuffisants")
+		else :
+			await author.dm_channel.send("Tu dois préciser l'identifiant de la soirée à modifier")
 
 	elif crud == "delete" :
 		if event_id == None :

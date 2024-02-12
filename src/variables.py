@@ -22,8 +22,7 @@ bot_owner_id = 394185214479302656
 
 role_to_channel = {
 	"ésisarien(ne)": 1179805849531719775,
-	"soirées jeux": 1179805962987647037,
-	"novice": 1179807649815068762
+	"soirées jeux": 1179805962987647037
 }
 
 # /!\ Si CRLF en début ou fin de message, le bot ne les enverra pas dans le message
@@ -31,7 +30,6 @@ role_to_channel = {
 roles_msg = """Salut {tadelles},
 Ici, tu peux décider d'avoir ou non certains rôles du serveur. Réagis à ce message avec l'émoji correspondant au rôle que tu souhaites avoir :
 - si tu souhaites avoir le rôle {soirées_jeux} pour être informé(e) des soirées jeux organisées à Grenoble, réagis avec :game_die:
-- si tu es un joueur peu expérimenté et que tu souhaites découvrir les jeux de société lors de soirées d'initiation ou simplement que tu aimes les jeux d'ambiance, tu peux réagir avec :baby: pour obtenir le rôle {novice}
 - si tu habites à Grenoble ou dans les alentours, tu peux avoir le rôle {grenoble} en réagissant avec :mountain_snow:"""
 
 welcome_msg = "7tadelliens, 7tadelliennes,\n\

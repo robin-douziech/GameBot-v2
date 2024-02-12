@@ -17,6 +17,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !event create : créer une soirée jeux (je vais te poser les questions nécessaires, laisse-toi guider ;) )\n"
 		msg += f"- !event read : obtenir la liste des soirées jeux existantes\n"
 		msg += f"- !event read [event_id] : obtenir des informations sur une soirée jeux en particulier\n"
+		msq +=  "- !event update [event_id] -p [delta] : modifier le nombre maximum d'invités à la soirée (delta={+|-}N)\n"
 		msg += f"- !event delete [event_id] : supprimer une soirée jeux\n"
 		msg += f"- !invite [event_id] [role] : inviter un role à une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"roles\")\n"
 		msg += f"- !invite [event_id] [pseudo] : ajouter un membre à la liste des invités d'une soirée jeux (le paramètre \"type_invités\" de la soiée jeux doit valoir \"membres\"). Cette commande n'envoie pas les invitations.\n"
@@ -42,6 +43,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 	msg += f"  Les différents mots-clé existant sont : {' - '.join(keywords)}\n"
 	msg += f"- !game [name] : rechercher les jeux dont le nom contient \"name\". Si plusieurs jeux sont trouvé, tu obtiendras la liste de leurs noms. Si un seul jeu correspond, tu obtiendras davantage d'informations sur ce jeu\n"
 	msg += f"- !game : obtenir la liste complète des jeux présents dans ma base de données\n"
+	msg += f"= !game grade [name] [grade] : donner une note à un jeu\n"
 
 	msg += "\n"
 
@@ -68,8 +70,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !kw [jeu] [mot-clé] : ajouter un mot-clé à un jeu\n"
 		msg += f"- !news : faire en sorte que le bot fasse une annonce dans le channel \"annonces-bot\" (je vais te poser les questions nécessaires, laisse-toi guider ;) ) Si tu fais une erreur lors de la création de l'annonce tu auras l'occasion de l'annuler avant que je ne l'envoie à la fin de mes questions.\n"
 		msg +=  "- !json {events|games|members|news|polls|rankings|roles|vars} : afficher le contenu d'un des fichier json du bot (pour debug)\n"
-		msg += f"- !logs : afficher les 10 dernières lignes de log du bot (pour debug)\n"
-		msg += f"- !clean : vider les channels \"bienvenue\", \"annonces-bot\" et \"info-du-bot\" (conséquence: supprime tous les sondages)\n"
+		msg += f"- !logs [n] : afficher les n dernières lignes de log du bot (pour debug)\n"
 		msg += f"- !kill : éteindre le bot\n"
 	msg += f"- !dé [n] : lancer un dé à n faces\n"
 

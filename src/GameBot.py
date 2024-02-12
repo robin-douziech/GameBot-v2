@@ -143,21 +143,19 @@ class GameBot(commands.Bot):
 		tadelles = await self.get_role("7tadellien(ne)")
 		soirées_jeux = await self.get_role("soirées jeux")
 		grenoble = await self.get_role("grenoble")
-		novice = await self.get_role("novice")
 		try :
 			self.roles_msg = await self.channels["roles"].fetch_message(self.roles["roles_msgid"])
-			if self.roles_msg.content != roles_msg.format(tadelles=tadelles.mention, soirées_jeux=soirées_jeux.mention, grenoble=grenoble.mention, novice=novice.mention) :
-				await self.send_roles_msg(soirées_jeux, grenoble, novice)
+			if self.roles_msg.content != roles_msg.format(tadelles=tadelles.mention, soirées_jeux=soirées_jeux.mention, grenoble=grenoble.mention) :
+				await self.send_roles_msg(soirées_jeux, grenoble)
 		except: 
-			await self.send_roles_msg(tadelles, soirées_jeux, grenoble, novice)
+			await self.send_roles_msg(tadelles, soirées_jeux, grenoble)
 
-	async def send_roles_msg(self, tadelles, soirées_jeux, grenoble, novice) :
+	async def send_roles_msg(self, tadelles, soirées_jeux, grenoble) :
 		await self.channels["roles"].purge()
 		self.roles_msg = await self.channels["roles"].send(roles_msg.format(
 			tadelles=tadelles.mention,
 			soirées_jeux=soirées_jeux.mention,
-			grenoble=grenoble.mention,
-			novice=novice.mention
+			grenoble=grenoble.mention
 		))
 		for role_name in self.roles["roles_dic"] :
 			await self.roles_msg.add_reaction(self.roles["roles_dic"][role_name]["reaction_name"])
