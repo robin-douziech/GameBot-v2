@@ -61,14 +61,14 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 	# remplir les scores
 	if len(args) > 0 :
 		results = bot.find_games_by_name(str(args[0]))
-		bot.log(f"results: {results}")
 		if len(results) > 1 :
 			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
 		elif len(results) == 1 :
-			if str(args[0] in parties):
-				for player in parties[str(args[0])] :
+			game = results[list(results.keys())[0]]
+			if game["name"] in parties:
+				for player in parties[game["name"]] :
 					players[player] = 0
-					for partie in parties[str(args[0])][player] :
+					for partie in parties[game["name"]][player] :
 						players[player] += int(partie[1])+1-int(partie[0])
 			elif all_time:
 				await author.dm_channel.send(f"Aucune partie du jeu {args[0]} n'a jamais été enregistrée")
