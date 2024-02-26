@@ -58,11 +58,15 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 		args = list(args)
 		args.pop(0)
 
-	# remplir les scores
+	### Remplir les scores des jeux concernés
+
+	# si un jeu est précisé on ne fait le classement que pour ce jeu
 	if len(args) > 0 :
-		results = bot.find_games_by_name(str(args[0]))
+		game_name = str(args[0])
+		results = bot.find_games_by_name(game_name)
 		if len(results) > 1 :
-			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
+			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{game_name}\" dans leur titre")
+			return
 		elif len(results) == 1 :
 			game = results[list(results.keys())[0]]
 			if game["name"] in parties:
@@ -71,11 +75,16 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 					for partie in parties[game["name"]][player] :
 						players[player] += int(partie[1])+1-int(partie[0])
 			elif all_time:
-				await author.dm_channel.send(f"Aucune partie du jeu {args[0]} n'a jamais été enregistrée")
+				await author.dm_channel.send(f"Aucune partie du jeu {game['name']} n'a jamais été enregistrée")
+				return
 			else:
-				await author.dm_channel.send(f"Aucune partie du jeu {args[0]} n'a été enregistrée ce mois-ci")
+				await author.dm_channel.send(f"Aucune partie du jeu {game['name']} n'a été enregistrée ce mois-ci")
+				return
 		else :
-			await author.dm_channel.send(f"Aucun jeu ne contient \"{args[1]}\" dans son titre")
+			await author.dm_channel.send(f"Aucun jeu ne contient \"{game_name}\" dans son titre")
+			return
+			
+	# sinon on fait le classement tous jeux confondus
 	else :
 		for game in parties :
 			for player in parties[game] :
