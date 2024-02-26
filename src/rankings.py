@@ -61,6 +61,7 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 	# remplir les scores
 	if len(args) > 0 :
 		results = bot.find_games_by_name(str(args[0]))
+		bot.log(f"results: {results}")
 		if len(results) > 1 :
 			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
 		elif len(results) == 1 :
