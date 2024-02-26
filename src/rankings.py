@@ -115,12 +115,12 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 
 	if all_time :
 		if len(args) > 0 :
-			msg = f"Voici le classement du jeu {args[0]} prenant en compte toutes les parties jouées depuis le début :\n"
+			msg = f"Voici le classement du jeu {game['name']} prenant en compte toutes les parties jouées depuis le début :\n"
 		else :
 			msg = f"Voici le classement tous jeux confondus, prenant en compte toutes les parties jouées depuis le début :\n"
 	else :
 		if len(args) > 0 :
-			msg = f"Voici le classement de ce mois-ci pour le jeu {args[0]} :\n"
+			msg = f"Voici le classement de ce mois-ci pour le jeu {game['name']} :\n"
 		else :
 			msg = f"Voici le classement de ce mois-ci, tous jeux confondus :\n"
 
