@@ -41,8 +41,9 @@ async def play_gamebot(ctx, *args, **kwargs) :
 					bot.rankings["parties"][game["name"]][str(player)] = []
 
 				bot.rankings["parties"][game["name"]][str(player)].append([args.index(str(player)),len(args)-1])
-				bot.write_json(bot.rankings, bot.rankings_file)
-				await author.dm_channel.send("Partie enregistrée avec succès !")
+			
+			bot.write_json(bot.rankings, bot.rankings_file)
+			await author.dm_channel.send("Partie enregistrée avec succès !")
 
 		else :
 			await author.dm_channel.send(f"Aucun jeu ne contient \"{game_name}\" dans son titre")
