@@ -60,23 +60,21 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 
 	# remplir les scores
 	if len(args) > 0 :
-		game_list = []
-		for category in games_categories :
-			game_list += list(bot.games[category].keys())
-		if not(str(args[0]) in game_list) :
-			await author.dm_channel.send(f"Le jeu {args[0]} n'est pas présent dans ma base de données")
-			return
-		if not(str(args[0]) in parties) :
-			if all_time :
+		results = bot.find_games_by_name(str(args[0]))
+		if len(results) > 1 :
+			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{args[1]}\" dans leur titre")
+		elif len(results) == 1 :
+			if str(args[0] in parties):
+				for player in parties[str(args[0])] :
+					players[player] = 0
+					for partie in parties[str(args[0])][player] :
+						players[player] += int(partie[1])+1-int(partie[0])
+			elif all_time:
 				await author.dm_channel.send(f"Aucune partie du jeu {args[0]} n'a jamais été enregistrée")
-			else :
+			else:
 				await author.dm_channel.send(f"Aucune partie du jeu {args[0]} n'a été enregistrée ce mois-ci")
-			return
-		for player in parties[str(args[0])] :
-			players[player] = 0
-			for partie in parties[str(args[0])][player] :
-				players[player] += int(partie[1])+1-int(partie[0])
-
+		else :
+			await author.dm_channel.send(f"Aucun jeu ne contient \"{args[1]}\" dans son titre")
 	else :
 		for game in parties :
 			for player in parties[game] :
