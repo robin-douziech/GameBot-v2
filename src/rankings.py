@@ -9,32 +9,47 @@ async def play_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 
 	if len(args) > 2 :
-		game_list = []
-		for category in games_categories :
-			game_list += list(bot.games[category].keys())
-		if not(str(args[0]) in game_list) :
-			await author.dm_channel.send(f"Le jeu {args[0]} n'est pas présent dans ma base de données")
+
+		game_name = str(args[0])
+		results = bot.find_games_by_name(game_name)
+
+		if len(results) > 1 :
+			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{game_name}\" dans leur titre")
 			return
-		for i,player in enumerate(args[1:]) :
-			if not(str(player) in bot.members) :
-				await author.dm_channel.send(f"Le pseudo {player} n'appartient à aucun joueur du serveur")
-				return
-			other_players = list(args[1:])
-			other_players.pop(i)
-			if str(player) in other_players :
-				await author.dm_channel.send(f"J'ai détecté un doublon dans la liste des joueurs")
-				return
-		if not(str(args[0]) in bot.rankings["parties"]) :
-			bot.rankings["parties"][str(args[0])] = {}
-		for player in args[1:] :
-			if not(str(player) in bot.rankings["parties"][str(args[0])]) :
-				bot.rankings["parties"][str(args[0])][str(player)] = []
-			bot.rankings["parties"][str(args[0])][str(player)].append([args.index(str(player)),len(args)-1])
-		bot.write_json(bot.rankings, bot.rankings_file)
-		await author.dm_channel.send("Partie enregistrée avec succès !")
+
+		elif len(results) == 1 :
+
+			game = results[list(results.keys())[0]]
+
+			# on cherche les pseudo inconnus et les pseudos en double
+			for i,player in enumerate(args[1:]) :
+				if not(str(player) in bot.members) :
+					await author.dm_channel.send(f"Le pseudo {player} n'appartient à aucun joueur du serveur")
+					return
+				other_players = list(args[1:])
+				other_players.pop(i)
+				if str(player) in other_players :
+					await author.dm_channel.send(f"J'ai détecté un doublon dans la liste des joueurs")
+					return
+
+			if not(game["name"] in bot.rankings["parties"]) :
+				bot.rankings["parties"][game["name"]] = {}
+
+			for player in args[1:] :
+
+				if not(str(player) in bot.rankings["parties"][game["name"]]) :
+					bot.rankings["parties"][game["name"]][str(player)] = []
+
+				bot.rankings["parties"][game["name"]][str(player)].append([args.index(str(player)),len(args)-1])
+				bot.write_json(bot.rankings, bot.rankings_file)
+				await author.dm_channel.send("Partie enregistrée avec succès !")
+
+		else :
+			await author.dm_channel.send(f"Aucun jeu ne contient \"{game_name}\" dans son titre")
+			return
 
 	else :
-		await author.dm_channel.send("Utilisation : !play jeu joueur1 joueur2 ...")
+		await author.dm_channel.send("Utilisation : !play [jeu] [joueur1] [joueur2] ...")
 
 @bot.command(name="ranking")
 @bot.dm_command
@@ -83,7 +98,7 @@ async def ranking_gamebot(ctx, *args, **kwargs) :
 		else :
 			await author.dm_channel.send(f"Aucun jeu ne contient \"{game_name}\" dans son titre")
 			return
-			
+
 	# sinon on fait le classement tous jeux confondus
 	else :
 		for game in parties :
