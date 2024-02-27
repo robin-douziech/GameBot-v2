@@ -129,6 +129,7 @@ keywords = [
 	"deck building",
 	"dés",
 	"draft",
+	"placement d'ouvriers",
 	"plis",
 	"prise de risque",
 	"rôles cachés",
@@ -136,7 +137,6 @@ keywords = [
 	"semi-coop",
 	"stop ou encore",
 	"tuiles",
-	"worker placement",
 ]
 game_creation_questions = {
 	"name": {
