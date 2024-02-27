@@ -475,6 +475,7 @@ class GameBot(commands.Bot):
 						msg += f"Nom de la soirée : {self.events[str(event_id)]['name']}\n"
 						msg += f"Description : {self.events[str(event_id)]['description']}\n"
 						msg += f"Date : {self.events[str(event_id)]['date']}\n"
+						msg += f"Heure : {self.events[str(event_id)]['heure']}\n"
 						await channel_tmp.send(msg)
 						self.events[str(event_id)]["creation_finished"] = True
 						self.members[f"{author.name}#{author.discriminator}"]["event_being_created"] = 0
