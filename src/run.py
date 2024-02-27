@@ -112,25 +112,32 @@ async def kw_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 
 	if len(args) > 1 :
-		game_list = []
-		for category in games_categories :
-			game_list += list(bot.games[category].keys())
-			if str(args[0]) in bot.games[category] :
-				game_cat = category
-		if not(str(args[0]) in game_list) :
-			await author.dm_channel.send(f"Le jeu {args[0]} n'est pas présent dans ma base de données")
-			return
-		if not(str(args[1]) in keywords) :
-			await author.dm_channel.send(f"Je ne connais pas le mot-clé {args[1]}.")
-			return
-		if bot.games[game_cat][str(args[0])]["keywords"] == "None" :
-			bot.games[game_cat][str(args[0])]["keywords"]
-			bot.write_json(bot.games, bot.games_file)
-		else :
-			bot.games[game_cat][str(args[0])]["keywords"] += f";{args[1]}"
-			bot.write_json(bot.games, bot.games_file)
 
-		await author.dm_channel.send(f"Le mot-clé {args[1]} a été ajouté au jeu {args[0]}.")
+		game_name = str(args[0])
+		keyword = str(args[1])
+		results = bot.find_games_by_name(game_name)
+
+		if len(results) > 1 :
+			await author.dm_channel.send(f"Plusieurs jeux contiennent \"{game_name}\" dans leur titre")
+			return
+			
+		elif len(results) == 1 :
+			game = results[list(results.keys())[0]]
+			if not(keyword in keywords):
+				await author.dm_channel.send(f"Je ne connais pas le mot-clé {keyword}.")
+				return
+			if bot.games[game['category']][game['name']]["keywords"] == "None" :
+				bot.games[game['category']][game['name']]["keywords"] = keyword
+				bot.write_json(bot.games, bot.games_file)
+			else :
+				bot.games[game['category']][game['name']]["keywords"] += f";{keyword}"
+				bot.write_json(bot.games, bot.games_file)
+
+			await author.dm_channel.send(f"Le mot-clé {keyword} a été ajouté au jeu {game['name']}.")
+
+		else :
+			await author.dm_channel.send(f"Aucun jeu ne contient \"{game_name}\" dans son titre")
+			return
 
 	else :
 		await author.dm_channel.send("Utilisation : !kw [jeu] [mot-clé]")
