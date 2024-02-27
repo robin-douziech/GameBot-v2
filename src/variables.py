@@ -122,20 +122,21 @@ alphabet = "0123456789AaàâBbCcçDdEeéèêëFfGgHhIiîïJjKkLlMmNnOoôPpQqRrSs
 alphabet_list = [re.escape(c) for c in alphabet]
 games_categories = ["ambiance", "amateur", "initié", "expert"]
 keywords = [
-	"deck building",
-	"worker placement",
-	"draft",
-	"cartes",
-	"dés",
-	"plis",
 	"asymétrie",
-	"rôles cachés",
 	"bluff",
+	"cartes",
 	"coop",
-	"semi-coop",
-	"tuiles",
+	"deck building",
+	"dés",
+	"draft",
+	"plis",
 	"prise de risque",
-	"roll and write"
+	"rôles cachés",
+	"roll and write",
+	"semi-coop",
+	"stop ou encore",
+	"tuiles",
+	"worker placement",
 ]
 game_creation_questions = {
 	"name": {

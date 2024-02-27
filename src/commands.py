@@ -36,6 +36,7 @@ async def help_gamebot(ctx, *args, **kwargs) :
 	if author.get_role(role_colocataire.id) != None :
 		msg += f"- !game create : ajouter un jeu à la base de données (je vais te poser les questions nécessaires, laisse-toi guider ;) )\n"
 		msg += f"- !game delete [name] : supprimer un jeu de la base de données\n"
+		msg += f"- !kw [jeu] [mot-clé] : ajouter un mot-clé à un jeu\n"
 		msg += f"- !video [game] [url] : ajouter une vidéo aux vidéos de présentation du jeu (le paramètre game est le nom du jeu, pas forcément en entier tant qu'il permet d'identifier le jeu de menière unique)\n"
 		msg += f"- !video [game] clear : supprimer toutes les vidéos de présentation du jeu\n"
 	msg += f"- !game -cat [category] : obtenir la liste des jeux d'une catégorie (les différenres catégories sont : "+", ".join(games_categories[:-1])+f" et {games_categories[-1]})\n"
@@ -67,7 +68,6 @@ async def help_gamebot(ctx, *args, **kwargs) :
 		msg += f"- !rankdelete : supprimer les classements (tous). Commande temporaire à ne jamais utiliser quand les gens auront rejoint le serveur (je la supprimerai sans doute d'ici-là)\n"
 		msg += f"- !teams [répartition] [joueur1] [joueur2] [jouer3] ... : faire des équipes aléatoirement. On peut utiliser les variables du bot pour renseigner les pseudos\n"
 		msg += f"exemple : !teams 2;2;2 $joueur1 $joueur2 $joueur3 $joueur4 $joueur5 $joueur6\n"
-		msg += f"- !kw [jeu] [mot-clé] : ajouter un mot-clé à un jeu\n"
 		msg += f"- !news : faire en sorte que le bot fasse une annonce dans le channel \"annonces-bot\" (je vais te poser les questions nécessaires, laisse-toi guider ;) ) Si tu fais une erreur lors de la création de l'annonce tu auras l'occasion de l'annuler avant que je ne l'envoie à la fin de mes questions.\n"
 		msg +=  "- !json {events|games|members|news|polls|rankings|roles|vars} : afficher le contenu d'un des fichier json du bot (pour debug)\n"
 		msg += f"- !logs [n] : afficher les n dernières lignes de log du bot (pour debug)\n"
