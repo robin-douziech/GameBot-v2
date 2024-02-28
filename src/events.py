@@ -94,6 +94,10 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 								if args[1][0] == "+":
 									bot.events[str(event_id)]["nb_max_joueurs"] = str(int(bot.events[str(event_id)]["nb_max_joueurs"]) + int(args[1][1:]))
 									bot.write_json(bot.events, bot.events_file)
+									if bot.events[str(event_id)]["type_invités"] == "membres":
+										await bot.update_invitations_members(str(event_id))
+									else:
+										await bot.update_invitations_roles(str(event_id))
 									await author.dm_channel.send("Nombre maximum d'invités modifié avec succès")
 								else :
 									available_places = int(bot.events[str(event_id)]["nb_max_joueurs"]) - len(bot.events[str(event_id)]["membres présents"])
