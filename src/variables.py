@@ -91,6 +91,10 @@ J'espère vous y voir nombreux :slight_smile:"
 
 role_invitation_msg_end = "J'espère vous y voir nombreux :slight_smile:"
 
+vip_msg = "Tu as été inscrit(e) à la soirée {soiree} par un colocataire.\
+Tu n'as rien besoin de faire pour t'inscrire à cette soirée, une place a été réservée spécialement pour toi.\
+Si tu souhaite te désinscrire de cette soirée, préviens un des colocataires."
+
 event_creation_questions = {
 	"name": {
 		"text": "Quel nom veux-tu donner à cette soirée ?",

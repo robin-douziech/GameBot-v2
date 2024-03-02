@@ -12,6 +12,12 @@ logging.basicConfig(
 )
 
 def strcmp(str1, str2, aplhabet) :
+	"""Compare two different strings
+	Returns:
+		 0 if str1 = str2
+		-1 if str1 < str2 (alphabetical order, with custom alphabet)
+		 1 if str1 > str2 (alphabetical order, with custom alphabet)
+	"""
 	if str1 == str2 :
 		return 0
 	for i in range(min([len(str1), len(str2)])) :
@@ -58,6 +64,7 @@ class GameBot(commands.Bot):
 		self.news = {}
 
 	def dm_command(self, function) :
+		"""Decorator checking if the command was sent in DMs"""
 		async def wrapper(ctx, *args, **kwargs) :
 			author = self.guild.get_member(ctx.author.id)
 			dm_channel = author.dm_channel
@@ -72,6 +79,7 @@ class GameBot(commands.Bot):
 		return wrapper
 
 	def colocataire_command(self, function) :
+		"""Decorator checking if the author of the command has the "colocataire" role"""
 		async def wrapper(ctx, *args, **kwargs) :
 			author = self.guild.get_member(ctx.author.id)
 			role = await self.get_role("colocataire")
@@ -82,6 +90,7 @@ class GameBot(commands.Bot):
 		return wrapper
 
 	def read_dollar_vars(self, function) :
+		"""Decorator transforming args starting with '$' into the corresponding variable value"""
 		async def wrapper(ctx, *args, **kwargs) :
 			new_args = []
 			for i in range(len(args)) :
@@ -375,13 +384,17 @@ class GameBot(commands.Bot):
 
 	async def remove_guest_from_event_members(self, event_id, member) :
 		try :
+
+			# on supprime le(s) msgid_to_eventid du membre à supprimer pour cette soirée
 			msgid_to_remove = []
 			for msg_id in self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'] :
 				if self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'][msg_id] == str(event_id) :
 					msgid_to_remove.append(msg_id)
 			for msg_id in msgid_to_remove :
 				self.members[f"{member.name}#{member.discriminator}"]['msgid_to_eventid'].pop(msg_id)
-			self.write_json(self.members, self.members_file)				
+			self.write_json(self.members, self.members_file)
+
+			# on supprime le membre de la soirée
 			if f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["liste d'attente"] :
 				self.events[str(event_id)]["liste d'attente"].remove(f"{member.name}#{member.discriminator}")
 			elif f"{member.name}#{member.discriminator}" in self.events[str(event_id)]["membres en attente"] :
@@ -391,22 +404,35 @@ class GameBot(commands.Bot):
 			else :
 				raise Exception("")
 			self.write_json(self.events, self.events_file)
+
+			# on lui retire le rôle de la soirée
 			role = await self.get_role(str(event_id))
 			await member.remove_roles(role)
+
+			# on le prévient et on préviens les colocataires
 			await member.dm_channel.send(f"Tu as été retiré(e) des participants à la soirée \"{self.events[str(event_id)]['name']}\".")
 			await self.channels["colocation"].send(f"{member.name} as été retiré(e) des participants à la soirée \"{self.events[str(event_id)]['name']}\".")
+
+			# on actualise la file d'attente
 			if self.events[str(event_id)]["type_invités"] == "membres" :
 				await self.update_invitations_members(event_id)
+			else :
+				await self.update_invitations_roles(event_id)
+
 		except Exception as e :
 			raise Exception(str(e))
 
 	async def invite_role_to_event(self, event_id, role) :
 		if role.name in role_to_channel :
-			role_colocataire = self.guild.get_role(self.roles["roles_ids"]["colocataire"])
+
 			nb_max_players_txt = ""
 			if self.events[str(event_id)]["nb_max_joueurs"] != "infinity" :
-				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée ({self.events[str(event_id)]['nb_max_joueurs']} places, {role_colocataire.mention} compris). Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais."
+				nb_players = int(self.events[str(event_id)]["nb_max_joueurs"])
+				nb_available_places = nb_players - len(self.events[str(event_id)]["membres présents"])
+				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée (on sera {nb_players}, il y a {nb_available_places} à prendre). Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais."
 				nb_max_players_txt += "Retirer ta réaction te désinscrira de la soirée et libèrera ta place si tu y participes, ou te retirera de la liste d'attente si tu es dedans. Remettre cette réaction après l'avoir retirée te placera au bout de la liste d'attente s'il y en a une donc fais bien attention à ne pas retirer ta réaction par inadvertance.\n"			
+			
+			# envoyer le message dans le salon du rôle
 			message = await self.channels[role.name].send(role_invitation_msg.format(
 				role=role.mention,
 				name=self.events[str(event_id)]["name"],
@@ -416,10 +442,24 @@ class GameBot(commands.Bot):
 				nb_max_joueurs=nb_max_players_txt
 			))
 			await message.add_reaction(chr(0x1F44D))
+
+			# evoyer message aux VIPs quand on invite le premier rôle
+			if len(self.events[str(event_id)]["rôles invités"]) == 0 :
+				for pseudo in self.events[str(event_id)]["vips"]:
+					vip = self.fetch_member(pseudo)
+					if vip.dm_channel == None :
+						await vip.create_dm()
+					role_tmp = self.get_role(str(event_id))
+					await vip.add_roles(role_tmp)
+					await vip.dm_channel.send(vip_msg.format(soiree=self.events[str(event_id)]["name"]))
+
+			# ajouter le rôle aux rôles invités
 			self.events[str(event_id)]["rôles invités"].append(role.name)
+
 			self.vars["msgid_to_eventid"][str(message.id)] = str(event_id)
 			self.write_json(self.vars, self.vars_file)
 			self.write_json(self.events, self.events_file)
+
 		else :
 			raise Exception("Invalid role")
 

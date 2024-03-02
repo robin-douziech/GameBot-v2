@@ -19,7 +19,6 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 			role_soirees_jeux = await bot.get_role("soirées jeux")
 			role_colocataire = await bot.get_role("colocataire")
 			category = discord.utils.get(bot.guild.categories, id=soirees_jeux_cat_id)
-			#role_tmp = await bot.guild.create_role(name=str(id_number))
 			role_tmp = await bot.get_role(str(id_number))
 			channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=category)
 			await channel_tmp.set_permissions(role_tmp, read_messages=True, send_messages=True)
@@ -33,9 +32,10 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 				"type_invités": "",
 
 				"liste d'attente": [], # les membres pas encore invité
-				"membres en attente": [], # les membres invité qui ont pas encore répondu
+				"membres en attente": [], # les membres invité qui n'ont pas encore répondu
 				"membres présents": [], # les membres invités qui ont répondu "oui"
 				"rôles invités": [],
+				"vips": [],
 
 				"role_id": role_tmp.id,
 				"channel_id": channel_tmp.id,
@@ -144,6 +144,8 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 	if delete == None :
 		if str(event_id) in bot.events :
 			try :
+
+				# inviter un membre
 				if bot.events[str(event_id)]["type_invités"] == "membres" :
 					if str(arg) in bot.members :
 						role_soirees_jeux = await bot.get_role("soirées jeux")
@@ -159,7 +161,9 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 							await author.dm_channel.send(f"{arg} ne possède pas le rôle \"soirées jeux\".")
 					else :
 						raise ValueError("Membre introuvable")
-				elif bot.events[str(event_id)]["type_invités"] == "roles": 
+
+				# inviter un rôle
+				elif bot.events[str(event_id)]["type_invités"] == "roles":
 					if str(arg) in bot.roles["roles_ids"] :
 						if not(str(arg) in bot.events[str(event_id)]["rôles invités"]) :
 							try :
@@ -171,6 +175,7 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 							await author.dm_channel.send(f"Le rôle {arg} est déjà invité.")
 					else :
 						await author.dm_channel.send(f"Le rôle {arg} n'existe pas.")
+						
 			except Exception as e :
 				await author.dm_channel.send("Le pseudo ou le rôle que tu as renseigné est invalide.")
 		else :
@@ -211,3 +216,48 @@ async def send_gamebot(ctx, *args, **kwargs) :
 			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
 	else :
 		await author.dm_channel.send("Tu dois préciser l'identifiant de la soirée pour laquelle je dois envoyer les invitations")
+
+@bot.command(name="vip")
+@bot.dm_command
+@bot.colocataire_command
+async def vip_gamebot(ctx, *args, **kwargs):
+
+	author = bot.guild.get_member(ctx.author.id)
+
+	if len(args) > 1 :
+
+		event_id = str(args[0])
+		pseudo = str(args[1])
+
+		if event_id in bot.events:
+
+			if pseudo in bot.members :
+
+				if bot.events[event_id]["type_invités"] == "rôles" :
+
+					if len(bot.events[event_id]["rôles invités"]) == 0 :
+
+						if bot.events[event_id]["nb_max_joueurs"] != "infinity":
+							if len(bot.events[event_id]["membres présents"]) >= int(bot.events[event_id]["nb_max_joueurs"]):
+								await author.dm_channel.send("La soirée est déjà complète")
+								return
+
+						# on inscrit le VIP
+						bot.events[event_id]["membres présents"].append(pseudo)
+						bot.events[event_id]["vips"].append(pseudo)
+						bot.write_json(bot.events, bot.events_file)
+
+					else :
+						await author.dm_channel.send("Il faut inscrire les VIPs avant d'inviter un rôle à la soirée")
+
+				else :
+					await author.dm_channel.send("On ne peut mettre des VIPs que dans les soirées pour lesquelles on invite des rôles")
+
+			else :
+				await author.dm_channel.send(f"Je ne connais pas le membre \"{pseudo}\"")
+
+		else :
+			await author.dm_channel.send(f"Aucune soirée ne possède l'identifiant \"{event_id}\"")
+
+	else :
+		await author.dm_channel.send("Utilisation: !vip [event_id] [pseudo]")
