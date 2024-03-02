@@ -166,11 +166,14 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 				elif bot.events[str(event_id)]["type_invités"] == "roles":
 					if str(arg) in bot.roles["roles_ids"] :
 						if not(str(arg) in bot.events[str(event_id)]["rôles invités"]) :
-							try :
-								role = await bot.get_role(str(arg))
-								await bot.invite_role_to_event(event_id, role)
-							except :
-								await author.dm_channel.send("Tu ne peux pas inviter ce rôle")
+							if (bot.events[str(event_id)]["nb_max_joueurs"] == "infinity") or (int(bot.events[str(event_id)]["nb_max_joueurs"]) - len(bot.events[str(event_id)]["membres présents"])) > 0 :
+								try :
+									role = await bot.get_role(str(arg))
+									await bot.invite_role_to_event(event_id, role)
+								except :
+									await author.dm_channel.send("Tu ne peux pas inviter ce rôle")
+							else :
+								await author.dm_channel.send("Tu ne peux pas inviter un rôle, la soirée est complète.")
 						else :
 							await author.dm_channel.send(f"Le rôle {arg} est déjà invité.")
 					else :
