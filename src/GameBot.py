@@ -429,7 +429,7 @@ class GameBot(commands.Bot):
 			if self.events[str(event_id)]["nb_max_joueurs"] != "infinity" :
 				nb_players = int(self.events[str(event_id)]["nb_max_joueurs"])
 				nb_available_places = nb_players - len(self.events[str(event_id)]["membres présents"])
-				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée (on sera {nb_players}, il y a {nb_available_places} à prendre). Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais."
+				nb_max_players_txt = f"Attention, il y a un nombre de places limité à cette soirée (on sera {nb_players}, il y a {nb_available_places} places à prendre). Si je ne t'envoie pas de message de confirmation suite à ta réaction, c'est qu'il ne reste plus de places. Tu peux cependant laisser ta réaction car je possède une liste d'attente et si une place se libère pour toi, je t'en informerais."
 				nb_max_players_txt += "Retirer ta réaction te désinscrira de la soirée et libèrera ta place si tu y participes, ou te retirera de la liste d'attente si tu es dedans. Remettre cette réaction après l'avoir retirée te placera au bout de la liste d'attente s'il y en a une donc fais bien attention à ne pas retirer ta réaction par inadvertance.\n"			
 			
 			# envoyer le message dans le salon du rôle
@@ -449,7 +449,7 @@ class GameBot(commands.Bot):
 					vip = self.fetch_member(pseudo)
 					if vip.dm_channel == None :
 						await vip.create_dm()
-					role_tmp = self.get_role(str(event_id))
+					role_tmp = await self.get_role(str(event_id))
 					await vip.add_roles(role_tmp)
 					await vip.dm_channel.send(vip_msg.format(soiree=self.events[str(event_id)]["name"]))
 
