@@ -175,7 +175,7 @@ async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwa
 							await author.dm_channel.send(f"Le rôle {arg} est déjà invité.")
 					else :
 						await author.dm_channel.send(f"Le rôle {arg} n'existe pas.")
-						
+
 			except Exception as e :
 				await author.dm_channel.send("Le pseudo ou le rôle que tu as renseigné est invalide.")
 		else :
@@ -233,7 +233,7 @@ async def vip_gamebot(ctx, *args, **kwargs):
 
 			if pseudo in bot.members :
 
-				if bot.events[event_id]["type_invités"] == "rôles" :
+				if bot.events[event_id]["type_invités"] == "roles" :
 
 					if len(bot.events[event_id]["rôles invités"]) == 0 :
 
