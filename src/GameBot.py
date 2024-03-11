@@ -335,7 +335,7 @@ class GameBot(commands.Bot):
 		if not(self.event_is_over(event_id)) :
 			for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
 				Member = self.fetch_member(member)
-				await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+				await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']} a été supprimée.")
 
 		# on supprime tous les sondages liés à cette soirée
 		polls_to_delete = []
