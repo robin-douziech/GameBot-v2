@@ -345,7 +345,7 @@ class GameBot(commands.Bot):
 		for poll_id in polls_to_delete :
 			self.polls.pop(poll_id)
 		
-		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']} a été supprimée.")
 		await self.guild.get_channel(self.events[str(event_id)]["channel_id"]).delete()
 		await self.guild.get_role(self.events[str(event_id)]["role_id"]).delete()
 		self.roles["roles_ids"].pop(str(event_id))
