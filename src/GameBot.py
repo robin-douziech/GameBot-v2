@@ -113,6 +113,32 @@ class GameBot(commands.Bot):
 		with open(file, "wt") as f :
 			f.write(json_object)
 
+	def current_datetime(self):
+		now = dt.datetime.now().strftime('%d/%m/%y %H:%M')
+		datetime = {
+			"day": now.split()[0].split('/')[0],
+			"month": now.split()[0].split('/')[1],
+			"year": now.split()[0].split('/')[2],
+			"hour": now.split()[1].split(':')[0],
+			"minute": now.split()[1].split(':')[1]
+		}
+		if int(datetime['hour']) + int(self.vars['clock_hour_offset']) > 23 :
+			datetime['day'] = f"{'0' if int(datetime['day'])+1<10 else ''}{int(datetime['day'])+1}"
+			if int(datetime['day']) > int(calendar.monthrange(int(datetime['year']), int(datetime['month']))[1]) :
+				datetime['day'] = "01"
+				datetime['month'] = f"{'0' if int(datetime['month'])+1<10 else ''}{int(datetime['month'])+1}"
+				if int(datetime['month']) > 12 :
+					datetime['month'] = "01"
+					datetime['year'] = str(int(datetime['year'])+1)
+		datetime['hour'] = str((int(datetime['hour'])+int(self.vars['clock_hour_offset']))%24)
+		return datetime
+
+	def event_is_over(self, event_id):
+		datetime = self.current_datetime()
+		for key in ["year", "month", "day", "hour", "minute"] :
+			if datetime[key] != self.events[str(event_id)]['datetime'][key] :
+				return int(datetime[key]) > int(self.events[str(event_id)]['datetime'][key])
+
 	async def remove_member_from_all_events(self, member) :
 		for event_id in self.events :
 			for str_ in ["liste d'attente", "membres en attente", "membres présents"] :
@@ -304,9 +330,13 @@ class GameBot(commands.Bot):
 		self.write_json(self.roles, self.roles_file)
 
 	async def delete_event(self, event_id) :
-		for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
-			Member = self.fetch_member(member)
-			await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+		
+		# si la soirée n'est pas passée, on prévient les participants
+		if not(self.event_is_over(event_id)) :
+			for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
+				Member = self.fetch_member(member)
+				await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+		
 		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
 		await self.guild.get_channel(self.events[str(event_id)]["channel_id"]).delete()
 		await self.guild.get_role(self.events[str(event_id)]["role_id"]).delete()
@@ -332,8 +362,8 @@ class GameBot(commands.Bot):
 		message = await dm_channel.send(member_invitation_msg.format(
 			name=self.events[str(event_id)]["name"],
 			description=self.events[str(event_id)]["description"],
-			date = self.events[str(event_id)]["date"],
-			heure = self.events[str(event_id)]["heure"],
+			date = f"{self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']}",
+			heure = f"{self.events[str(event_id)]['datetime']['hour']}:{self.events[str(event_id)]['datetime']['minute']}",
 			présents = " ; ".join(self.events[str(event_id)]["membres présents"]), 
 			invités = " ; ".join(membres_invites)
 		))
@@ -434,12 +464,12 @@ class GameBot(commands.Bot):
 			
 			# envoyer le message dans le salon du rôle
 			message = await self.channels[role.name].send(role_invitation_msg.format(
-				role=role.mention,
-				name=self.events[str(event_id)]["name"],
-				description=self.events[str(event_id)]["description"],
-				date=self.events[str(event_id)]["date"],
-				heure=self.events[str(event_id)]["heure"],
-				nb_max_joueurs=nb_max_players_txt
+				role = role.mention,
+				name = self.events[str(event_id)]["name"],
+				description = self.events[str(event_id)]["description"],
+				date = f"{self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']}",
+				heure = f"{self.events[str(event_id)]['datetime']['hour']}:{self.events[str(event_id)]['datetime']['minute']}",
+				nb_max_joueurs = nb_max_players_txt
 			))
 			await message.add_reaction(chr(0x1F44D))
 
@@ -499,6 +529,7 @@ class GameBot(commands.Bot):
 
 		if author.get_role(role_colocataire.id) != None :
 
+			# Création d'une soirée jeux
 			if self.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] :
 				if self.answer_is_valid(author, message.content, event_creation_questions) :
 					event_id = self.members[f"{author.name}#{author.discriminator}"]["event_being_created"]
@@ -508,14 +539,22 @@ class GameBot(commands.Bot):
 					await self.send_next_question(author, event_creation_questions)
 
 					if len(self.members[f"{author.name}#{author.discriminator}"]["questions"]) == 0 :
+						datetime = self.events[str(event_id)]["datetime"]
+						self.events[str(event_id)]["datetime"] = {
+							"day": datetime.split()[0].split('/')[0],
+							"month": datetime.split()[0].split('/')[1],
+							"year": datetime.split()[0].split('/')[2],
+							"hour": datetime.split()[1].split(':')[0],
+							"minute": datetime.split()[1].split(':')[1]
+						}
 						channel_tmp = self.guild.get_channel(self.events[str(event_id)]["channel_id"])
 						await channel_tmp.edit(name=self.events[str(event_id)]["name"])
 						msg = f"Bienvenue dans ce salon temporaire !\n\n"
 						msg += f"Ce salon est un salon temporaire associé à une soirée jeux à laquelle tu participes, voici quelques informations sur la soirée :\n"
 						msg += f"Nom de la soirée : {self.events[str(event_id)]['name']}\n"
 						msg += f"Description : {self.events[str(event_id)]['description']}\n"
-						msg += f"Date : {self.events[str(event_id)]['date']}\n"
-						msg += f"Heure : {self.events[str(event_id)]['heure']}\n"
+						msg += f"Date : {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}{self.events[str(event_id)]['datetime']['year']}\n"
+						msg += f"Heure : {self.events[str(event_id)]['datetime']['hour']}:{self.events[str(event_id)]['datetime']['minute']}\n"
 						await channel_tmp.send(msg)
 						self.events[str(event_id)]["creation_finished"] = True
 						self.members[f"{author.name}#{author.discriminator}"]["event_being_created"] = 0
@@ -524,6 +563,7 @@ class GameBot(commands.Bot):
 						self.write_json(self.events, self.events_file)
 						await author.dm_channel.send("Soirée créée avec succès !")
 
+			# Création d'un jeu
 			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_game_creation"] :
 				if self.answer_is_valid(author, message.content, game_creation_questions) :
 					game_id = self.members[f"{author.name}#{author.discriminator}"]["game_being_created"]
@@ -542,6 +582,7 @@ class GameBot(commands.Bot):
 						self.write_json(self.members, self.members_file)
 						await author.dm_channel.send("Jeu créé avec succès !")
 
+			# Création d'une annonce
 			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_news_creation"] :
 				if self.answer_is_valid(author, message.content, news_creation_questions) :
 					news_id = self.members[f"{author.name}#{author.discriminator}"]["news_being_created"]
@@ -559,6 +600,7 @@ class GameBot(commands.Bot):
 						self.news.pop(str(news_id))
 						self.write_json(self.news, self.news_file)
 
+			# Création d'un sondage
 			elif self.members[f"{author.name}#{author.discriminator}"]["questionned_poll_creation"] :
 				if self.answer_is_valid(author, message.content, poll_creation_questions) :
 					poll_id = self.members[f"{author.name}#{author.discriminator}"]["poll_being_created"]

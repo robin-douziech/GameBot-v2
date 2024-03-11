@@ -25,8 +25,7 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 			await channel_tmp.set_permissions(role_soirees_jeux, read_messages=False, send_messages=False)
 			bot.events[str(id_number)] = {
 				"name": "",
-				"date": "",
-				"heure": "",
+				"datetime": "",
 				"description": "",
 				"nb_max_joueurs": "",
 				"type_invités": "",

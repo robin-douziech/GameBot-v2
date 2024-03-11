@@ -91,22 +91,18 @@ J'espère vous y voir nombreux :slight_smile:"
 
 role_invitation_msg_end = "J'espère vous y voir nombreux :slight_smile:"
 
-vip_msg = "Tu as été inscrit(e) à la soirée {soiree} par un colocataire.\
-Tu n'as rien besoin de faire pour t'inscrire à cette soirée, une place a été réservée spécialement pour toi.\
-Si tu souhaite te désinscrire de cette soirée, préviens un des colocataires."
+vip_msg = "Tu as été inscrit(e) à la soirée {soiree} par un colocataire. \
+Tu n'as rien besoin de faire pour t'inscrire à cette soirée, une place toute chaude a été réservée spécialement pour toi. \
+Si tu souhaites te désinscrire de cette soirée, préviens un des colocataires."
 
 event_creation_questions = {
 	"name": {
 		"text": "Quel nom veux-tu donner à cette soirée ?",
 		"valid_answers": r".*"
 	},
-	"date": {
-		"text": "Quelle est la date de la soirée ? (format: jj-mm-aaaa)",
-		"valid_answers": r"^((0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-20(2[4-9]|[3-9][0-9]))$"
-	},
-	"heure": {
-		"text": "À quelle heure débutera cette soirée ? (format : XXhXX)",
-		"valid_answers": r"^(([0-1][0-9]|2[0-3])h([0-5][0-9]))$"
+	"datetime": {
+		"text": "Quelles sont la date et l'heure de la soirée ? (format: jj/mm/aaaa hh:mm)",
+		"valid_answers": r"^((0[1-9]|[1-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/20(2[4-9]|[3-9][0-9]) ([0-1][0-9]|2[0-3]):([0-5][0-9]))$"
 	},
 	"description": {
 		"text": "Donne-moi une courte description pour cette soirée",
