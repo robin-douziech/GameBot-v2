@@ -336,6 +336,14 @@ class GameBot(commands.Bot):
 			for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
 				Member = self.fetch_member(member)
 				await Member.dm_channel.send(f"Attention : la soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
+
+		# on supprime tous les sondages liés à cette soirée
+		polls_to_delete = []
+		for poll_id in self.polls :
+			if self.polls[poll_id]['soirée?'] == f"oui:{event_id}" :
+				polls_to_delete.append(poll_id)
+		for poll_id in polls_to_delete :
+			self.polls.pop(poll_id)
 		
 		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['date']} a été supprimée.")
 		await self.guild.get_channel(self.events[str(event_id)]["channel_id"]).delete()
@@ -345,6 +353,7 @@ class GameBot(commands.Bot):
 		self.delete_invitation_messageid_for_event_role(event_id)
 		self.events.pop(event_id)
 		self.write_json(self.events, self.events_file)
+		self.write_json(self.polls, self.polls_file)
 		self.write_json(self.roles, self.roles_file)
 		self.write_json(self.vars, self.vars_file)
 
