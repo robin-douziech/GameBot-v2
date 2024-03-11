@@ -118,7 +118,7 @@ class GameBot(commands.Bot):
 		datetime = {
 			"day": now.split()[0].split('/')[0],
 			"month": now.split()[0].split('/')[1],
-			"year": now.split()[0].split('/')[2],
+			"year": "20"+now.split()[0].split('/')[2],
 			"hour": now.split()[1].split(':')[0],
 			"minute": now.split()[1].split(':')[1]
 		}
