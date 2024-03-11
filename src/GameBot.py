@@ -137,9 +137,9 @@ class GameBot(commands.Bot):
 		datetime = self.current_datetime()
 		for key in ["year", "month", "day", "hour", "minute"] :
 			if datetime[key] != self.events[str(event_id)]['datetime'][key] :
-				bot.log(f"datetime: {datetime}")
-				bot.log(f"event: {self.events[str(event_id)]['datetime']}")
-				bot.log(f"key: {key}")
+				self.log(f"datetime: {datetime}")
+				self.log(f"event: {self.events[str(event_id)]['datetime']}")
+				self.log(f"key: {key}")
 				return int(datetime[key]) > int(self.events[str(event_id)]['datetime'][key])
 
 	async def remove_member_from_all_events(self, member) :
