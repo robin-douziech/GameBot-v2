@@ -122,12 +122,14 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 	elif crud == "delete" :
 		if event_id == None :
 			await author.dm_channel.send("Tu dois préciser l'identifiant de la soirée à supprimer.\nUtilisation : !event delete [event_id]")
-		else :
+		elif event_id in bot.events :
 			try :
 				await bot.delete_event(event_id)
 				await author.dm_channel.send("La soirée a bien été supprimée")
-			except :
-				await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
+			except Exception as e :
+				await author.dm_channel.send(f"Exception: {e}")
+		else :
+			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
 
 @bot.command(name="invite")
 @bot.dm_command
