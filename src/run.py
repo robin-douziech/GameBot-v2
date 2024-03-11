@@ -229,6 +229,16 @@ async def logs_gamebot(ctx, nb_lines=10, *args, **kwargs) :
 	except :
 		pass
 
+@bot.command(name="test")
+@bot.dm_command
+@bot.colocataire_command
+async def test_gamebot(ctx) :
+	author = bot.guild.get_member(ctx.author.id)
+	msg = ""
+	for event_id in bot.events :
+		msg += f"soirée n°{event_id} : {'PASSÉ' if bot.event_is_over(event_id) else 'FUTUR'}"
+	await author.dm_channel.send(msg)
+
 @bot.command(name="kill")
 @bot.dm_command
 @bot.colocataire_command
