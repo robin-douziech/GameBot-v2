@@ -330,7 +330,7 @@ class GameBot(commands.Bot):
 		self.write_json(self.roles, self.roles_file)
 
 	async def delete_event(self, event_id) :
-		
+
 		# si la soirée n'est pas passée, on prévient les participants
 		if not(self.event_is_over(event_id)) :
 			for member in self.events[str(event_id)]["membres présents"]+self.events[str(event_id)]["membres en attente"] :
@@ -562,7 +562,7 @@ class GameBot(commands.Bot):
 						msg += f"Ce salon est un salon temporaire associé à une soirée jeux à laquelle tu participes, voici quelques informations sur la soirée :\n"
 						msg += f"Nom de la soirée : {self.events[str(event_id)]['name']}\n"
 						msg += f"Description : {self.events[str(event_id)]['description']}\n"
-						msg += f"Date : {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}{self.events[str(event_id)]['datetime']['year']}\n"
+						msg += f"Date : {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']}\n"
 						msg += f"Heure : {self.events[str(event_id)]['datetime']['hour']}:{self.events[str(event_id)]['datetime']['minute']}\n"
 						await channel_tmp.send(msg)
 						self.events[str(event_id)]["creation_finished"] = True
