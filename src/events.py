@@ -134,73 +134,91 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 @bot.command(name="invite")
 @bot.dm_command
 @bot.colocataire_command
-async def invite_gamebot(ctx, event_id=None, arg=None, delete=None, *args, **kwargs) :
+@bot.no_duplicates
+@bot.read_dollar_vars
+async def invite_gamebot(ctx, *args, **kwargs):
 
 	author = bot.guild.get_member(ctx.author.id)
 
-	if event_id == None or arg == None :
-		await author.dm_channel.send("Utilisation : !invit [event_id] [pseudo ou role]")
-		return
+	if len(args) > 1 :
 
-	if delete == None :
-		if str(event_id) in bot.events :
-			try :
+		event_id = str(args[0])
 
-				# inviter un membre
-				if bot.events[str(event_id)]["type_invités"] == "membres" :
-					if str(arg) in bot.members :
-						role_soirees_jeux = await bot.get_role("soirées jeux")
-						Member = bot.fetch_member(str(arg))
-						if Member.get_role(role_soirees_jeux.id) != None :
-							if str(arg) not in bot.events[str(event_id)]["liste d'attente"]+bot.events[str(event_id)]["membres en attente"]+bot.events[str(event_id)]["membres présents"] :
-								bot.events[str(event_id)]["liste d'attente"].append(str(arg))
-								bot.write_json(bot.events, bot.events_file)
-								#await bot.update_invitations_members(event_id)
-							else :
-								await author.dm_channel.send(f"{arg} est déjà invité(e) à cette soirée")
-						else :
-							await author.dm_channel.send(f"{arg} ne possède pas le rôle \"soirées jeux\".")
-					else :
-						raise ValueError("Membre introuvable")
+		if event_id in bot.events :
 
-				# inviter un rôle
-				elif bot.events[str(event_id)]["type_invités"] == "roles":
-					if str(arg) in bot.roles["roles_ids"] :
-						if not(str(arg) in bot.events[str(event_id)]["rôles invités"]) :
-							if (bot.events[str(event_id)]["nb_max_joueurs"] == "infinity") or (int(bot.events[str(event_id)]["nb_max_joueurs"]) - len(bot.events[str(event_id)]["membres présents"])) > 0 :
+			invited_members = bot.events[event_id]["membres présents"] + bot.events[event_id]["membres en attente"] + bot.events[event_id]["liste d'attente"]
+			
+			# on ajoute des membres ou un role
+			if args[1] != "delete" :
+
+				# on ajoute un role
+				if bot.events[event_id]["type_invités"] == "roles" :
+					role_str = str(args[1])
+					if role_str in bot.roles["roles_ids"] :
+						role = await bot.get_role(role_str)
+						if not(role_str in bot.events[event_id]["rôles invités"]) :
+							if (bot.events[event_id]["nb_max_joueurs"] == "infinity") or (int(bot.events[event_id]["nb_max_joueurs"]) - len(bot.events[event_id]["membres présents"]) > 0) :
 								try :
-									role = await bot.get_role(str(arg))
+									# succès
 									await bot.invite_role_to_event(event_id, role)
-								except :
-									await author.dm_channel.send("Tu ne peux pas inviter ce rôle")
+									await author.dm_channel.send(f"Rôle \"{role_str}\" invité avec succès !")
+								except Exception as e :
+									await author.dm_channel.send(f"Exception: {e}")
 							else :
-								await author.dm_channel.send("Tu ne peux pas inviter un rôle, la soirée est complète.")
+								await author.dm_channel.send("Tu ne peux pas inviter un rôle, la soirée est complète")
 						else :
-							await author.dm_channel.send(f"Le rôle {arg} est déjà invité.")
+							await author.dm_channel.send(f"Le rôle {role_str} est déjà invité")
 					else :
-						await author.dm_channel.send(f"Le rôle {arg} n'existe pas.")
+						await author.dm_channel.send(f"Le rôle {role_str} n'existe pas")
 
-			except Exception as e :
-				await author.dm_channel.send("Le pseudo ou le rôle que tu as renseigné est invalide.")
-		else :
-			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
+				# on ajoute des membres
+				elif bot.events[event_id]["type_invités"] == "membres" :
+					if set(args[1:]) <= set([m in bot.members if not(m in invited_members)]) :
+						role_soirees_jeux = await bot.get_role("soirées jeux")
+						for member in args[1:] :
+							Member = bot.fetch_member(member)
+							if Member.get_role(role_soirees_jeux.id) == None :
+								await author.dm_channel.send(f"Le membre {member} n'a pas le rôle \"soirées jeux\"")
+								await author.dm_channel.send(f"Échec de l'invitation des membres")
+								return
 
-	elif delete == "delete" :
-		if str(event_id) in bot.events :
-			if str(arg) in bot.members :
-				try :
-					Member = bot.fetch_member(str(arg))
-					await bot.remove_guest_from_event_members(event_id, Member)
-					await author.dm_channel.send("Participant retiré avec succès !")
-				except :
-					await author.dm_channel.send(f"{arg} ne fais pas partie des participants à cette soirée.")
+						# succès
+						bot.events[event_id]["liste d'attente"].extend(args[1:])
+						bot.write_json(bot.events, bot.events_file)
+						await author.dm_channel.send(f"Membres ajoutés à la liste d'attente. Envoie-moi \"!send {event_id}\" pour envoyer les invitations")
+
+					else :
+						if len(set(args[1:]) - set(bot.members)) > 0 :
+							await author.dm_channel.send(f"Les membres suivants n'existent pas :\n- {'\n- '.join(set(args[1:]) - set(bot.members))}")
+						if len(set(args[1:]).intersection(set(invited_members))) > 0 :
+							await author.dm_channel.send(f"Les membres suivants sont déjà invités : \n- {'\n- '.join(set(args[1:]).intersection(set(invited_members)))}")
+						await author.dm_channel.send("Échec de l'invitation des membres")
+
+			# on supprime des membres
 			else :
-				await author.dm_channel.send(f"{arg} n'est pas le pseudo d'un membre du serveur")
-		else :
-			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
 
-	else: 
-		await author.dm_channel.send("Utilisation : !invite event_id pseudo [delete]")
+				if len(args) > 2 :
+					if set(args[2:]) <= set(invited_members) :
+
+						# succès
+						for member in args[2:] :
+							Member = bot.fetch_member(member)
+							await bot.remove_guest_from_event_members(event_id, Member)
+						if bot.events[event_id]["type_invités"] == "roles" :
+							await bot.update_invitations_roles(event_id)
+
+					else :
+						await author.dm_channel.send(f"Les membres suivant ne sont pas invités à la soirée :\n- {'\n- '.join(set(args[2:] - set(invited_members)))}")
+						await author.dm_channel.send("Échec de la suppression des membres")
+
+				else :
+					await author.dm_channel.send("Tu dois renseigner au moins un membre à supprimer de la soirée")
+
+		else :
+			await author.dm_channel.send(f"Aucune soirée ne possède l'identifiant {event_id}")
+
+	else :
+		await author.dm_channel.send("Utilisations possibles:\n!invite [event_id] [role]\n!invite [event_id] [pseudo1] {[pseudo2] ...}\n!invite [event_id] delete [pseudo1] {[pseudo2] ...}")
 
 @bot.command(name="send")
 @bot.dm_command
@@ -210,14 +228,15 @@ async def send_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 
 	if len(args) > 0 :
-		if str(args[0]) in bot.events :
-			if bot.events[str(args[0])]["type_invités"] == "membres" :
-				await bot.update_invitations_members(str(args[0]))
-				await author.dm_channel.send(f"Invitations envoyées pour la soirée \"{bot.events[str(args[0])]['name']}\"")
+		event_id = str(args[0])
+		if event_id in bot.events :
+			if bot.events[event_id]["type_invités"] == "membres" :
+				await bot.update_invitations_members(event_id)
+				await author.dm_channel.send(f"Invitations envoyées pour la soirée \"{bot.events[event_id]['name']}\"")
 			else :
 				await author.dm_channel.send("Cette commande n'est nécessaire que pour les soirées auxquelles on invite des membres")
 		else :
-			await author.dm_channel.send("L'identifiant de soirée que tu as renseigné est invalide.")
+			await author.dm_channel.send(f"Aucune soirée ne possède l'identifiant {event_id}")
 	else :
 		await author.dm_channel.send("Tu dois préciser l'identifiant de la soirée pour laquelle je dois envoyer les invitations")
 

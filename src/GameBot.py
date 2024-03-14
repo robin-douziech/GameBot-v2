@@ -105,6 +105,15 @@ class GameBot(commands.Bot):
 			await function(ctx, *new_args, **kwargs)
 		return wrapper
 
+	def no_duplicates(self, function):
+		"""Decorator that check if there is no duplicates in arguments"""
+		async def wrapper(ctx, *args, **kwargs):
+			if len(set(args)) == len(args) :
+				await function(ctx, *args, **kwargs)
+			else:
+				ctx.author.dm_channel.send("Il y a un doublon dans les arguments de la commande")
+		return wrapper
+
 	def log(self, message) :
 		logging.info(message)
 
