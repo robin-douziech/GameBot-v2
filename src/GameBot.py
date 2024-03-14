@@ -164,8 +164,6 @@ class GameBot(commands.Bot):
 				colocataire_members = [m for m in self.members if self.fetch_member(m).get_role(role_colocataire.id)!=None]
 				if len(self.events[str(event_id)]["membres en attente"]) > 0 or len(set(self.events[str(event_id)]["membres présents"]) - set(colocataire_members)) > 0 :
 					await self.update_invitations_members(event_id)
-
-
 			else :
 				await self.update_invitations_roles(event_id)
 
