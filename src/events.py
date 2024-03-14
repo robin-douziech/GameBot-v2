@@ -189,9 +189,9 @@ async def invite_gamebot(ctx, *args, **kwargs):
 
 					else :
 						if len(set(args[1:]) - set(bot.members)) > 0 :
-							await author.dm_channel.send(f"Les membres suivants n'existent pas :\n- {'\n- '.join(set(args[1:]) - set(bot.members))}")
+							await author.dm_channel.send(f"Les membres suivants n'existent pas :\n{' - '.join(set(args[1:]) - set(bot.members))}")
 						if len(set(args[1:]).intersection(set(invited_members))) > 0 :
-							await author.dm_channel.send(f"Les membres suivants sont déjà invités : \n- {'\n- '.join(set(args[1:]).intersection(set(invited_members)))}")
+							await author.dm_channel.send(f"Les membres suivants sont déjà invités : \n{' - '.join(set(args[1:]).intersection(set(invited_members)))}")
 						await author.dm_channel.send("Échec de l'invitation des membres")
 
 			# on supprime des membres
@@ -208,7 +208,7 @@ async def invite_gamebot(ctx, *args, **kwargs):
 							await bot.update_invitations_roles(event_id)
 
 					else :
-						await author.dm_channel.send(f"Les membres suivant ne sont pas invités à la soirée :\n- {'\n- '.join(set(args[2:] - set(invited_members)))}")
+						await author.dm_channel.send(f"Les membres suivant ne sont pas invités à la soirée :\n{' - '.join(set(args[2:] - set(invited_members)))}")
 						await author.dm_channel.send("Échec de la suppression des membres")
 
 				else :
