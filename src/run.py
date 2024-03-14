@@ -168,14 +168,15 @@ async def rankdelete_gamebot(ctx, *args, **kwargs) :
 async def json_gamebot(ctx, *args, **kwargs) :
 	author = bot.guild.get_member(ctx.author.id)
 	if len(args) > 0 :
-		try :
-			with open(f"json/{args[0]}.json", "rt") as f :
-				json_msg = f.read()
-			msg_list = bot.divide_message(json_msg, wrappers=('```json\n', '\n```'))
-			for msg in msg_list :
-				await author.dm_channel.send(msg)
-		except :
-			pass
+		if str(args[0]) in ["events", "members", "news", "polls", "rankings", "roles", "vars"] :
+			try :
+				with open(f"json/{args[0]}.json", "rt") as f :
+					json_msg = f.read()
+				msg_list = bot.divide_message(json_msg, wrappers=('```json\n', '\n```'))
+				for msg in msg_list :
+					await author.dm_channel.send(msg)
+			except :
+				pass
 	else :
 		await author.dm_channel.send("Tu dois préciser le fichier json à lire")
 
