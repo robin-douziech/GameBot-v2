@@ -160,7 +160,12 @@ class GameBot(commands.Bot):
 					pass
 			self.write_json(self.events, self.events_file)
 			if self.events[event_id]["type_invités"] == "membres" :
-				await self.update_invitations_members(event_id)
+				role_colocataire = self.guild.get_role(self.roles["roles_ids"]["colocataire"])
+				colocataire_members = [m for m in self.members if self.fetch_member(m).get_role(role_colocataire.id)!=None]
+				if len(self.events[str(event_id)]["membres en attente"]) > 0 or len(set(self.events[str(event_id)]["membres présents"]) - set(colocataire_members)) > 0 :
+					await self.update_invitations_members(event_id)
+
+
 			else :
 				await self.update_invitations_roles(event_id)
 
@@ -466,7 +471,10 @@ class GameBot(commands.Bot):
 
 			# on actualise la file d'attente
 			if self.events[str(event_id)]["type_invités"] == "membres" :
-				await self.update_invitations_members(event_id)
+				role_colocataire = self.guild.get_role(self.roles["roles_ids"]["colocataire"])
+				colocataire_members = [m for m in self.members if self.fetch_member(m).get_role(role_colocataire.id)!=None]
+				if len(self.events[str(event_id)]["membres en attente"]) > 0 or len(set(self.events[str(event_id)]["membres présents"]) - set(colocataire_members)) > 0 :
+					await self.update_invitations_members(event_id)
 			else :
 				await self.update_invitations_roles(event_id)
 
