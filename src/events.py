@@ -173,7 +173,7 @@ async def invite_gamebot(ctx, *args, **kwargs):
 
 				# on ajoute des membres
 				elif bot.events[event_id]["type_invités"] == "membres" :
-					if set(args[1:]) <= set([m in bot.members if not(m in invited_members)]) :
+					if set(args[1:]) <= set([m for m in bot.members if not(m in invited_members)]) :
 						role_soirees_jeux = await bot.get_role("soirées jeux")
 						for member in args[1:] :
 							Member = bot.fetch_member(member)
