@@ -287,6 +287,9 @@ async def vip_gamebot(ctx, *args, **kwargs):
 						bot.events[event_id]["vips"].append(pseudo)
 						bot.write_json(bot.events, bot.events_file)
 
+						await bot.channels[f"{event_id}"].send(f"{pseudo} a été ajouté(e) aux VIPs de la soirée {bot.events[event_id]['name']}")
+						await author.dm_channel.send(f"VIP ajouté avec succès !")
+
 					else :
 						await author.dm_channel.send("Il faut inscrire les VIPs avant d'inviter un rôle à la soirée")
 
