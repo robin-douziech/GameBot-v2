@@ -15,11 +15,9 @@ async def on_ready():
 
 	# salons des différentes soirées jeux
 	for event_id in bot.events :
-		try :
-			bot.channels[f"{event_id}"] = bot.guild.get_channel(bot.events[event_id]["channel_id"])
-			bot.channels[f"logs_{event_id}"] = bot.guild.get_channel(bot.events[event_id]["logs_channel_id"])
-		except :
-			pass
+		bot.channels[f"{event_id}"] = bot.guild.get_channel(bot.events[event_id]["channel_id"])
+		bot.channels[f"logs_{event_id}"] = bot.guild.get_channel(bot.events[event_id]["logs_channel_id"])
+
 
 	with open(bot.vars_file, "rt") as f :
 		bot.vars = json.load(f)
