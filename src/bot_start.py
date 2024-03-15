@@ -13,12 +13,6 @@ async def on_ready():
 	for role in role_to_channel :
 		bot.channels[role] = bot.guild.get_channel(role_to_channel[role])
 
-	# salons des différentes soirées jeux
-	for event_id in bot.events :
-		bot.log(f"EVENT_ID: {event_id}")
-		bot.channels[f"{event_id}"] = bot.guild.get_channel(bot.events[event_id]["channel_id"])
-		bot.channels[f"logs_{event_id}"] = bot.guild.get_channel(bot.events[event_id]["logs_channel_id"])
-
 	with open(bot.vars_file, "rt") as f :
 		bot.vars = json.load(f)
 	with open(bot.members_file, "rt") as f :
@@ -33,6 +27,11 @@ async def on_ready():
 		bot.rankings = json.load(f)
 	with open(bot.polls_file, "rt") as f :
 		bot.polls = json.load(f)
+
+	# salons des différentes soirées jeux
+	for event_id in bot.events :
+		bot.channels[f"{event_id}"] = bot.guild.get_channel(bot.events[event_id]["channel_id"])
+		bot.channels[f"logs_{event_id}"] = bot.guild.get_channel(bot.events[event_id]["logs_channel_id"])
 
 	bot.news = {}
 	bot.write_json(bot.news, bot.news_file)
