@@ -246,4 +246,22 @@ async def test_gamebot(ctx) :
 async def kill_gamebot(ctx, *args, **kwargs) :
 	sys.exit()
 
+@bot.command(name="var")
+@bot.dm_command
+@bot.colocataire_command
+async def var_gamebot(ctx, *args, **kwargs):
+	author = bot.guild.get_member(ctx.author.id)
+	if len(args) > 0 :
+		try :
+			var = getattr(bot, args[0])
+			msg = str(var)
+			msg_list = bot.divide_message(msg)
+			for msg in msg_list:
+				await author.dm_channel.send(msg)
+		except Exception as e :
+			await author.dm_channel.send(f"Exception: {e}")
+	else:
+		await author.dm_channel.send("Utilisation: !var [varname]")
+
+
 bot.run(os.getenv("TOKEN"))
