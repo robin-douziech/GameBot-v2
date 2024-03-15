@@ -9,8 +9,17 @@ async def on_ready():
 	bot.channels["colocation"] = bot.guild.get_channel(colocation_channel_id)
 	bot.channels["général-annonces"] = bot.guild.get_channel(general_annonces_channel_id)
 
+	# salons des rôles "ésisarien(ne)" et "soirées jeux"
 	for role in role_to_channel :
 		bot.channels[role] = bot.guild.get_channel(role_to_channel[role])
+
+	# salons des différentes soirées jeux
+	for event_id in bot.events :
+		try :
+			bot.channels[f"{event_id}"] = bot.guild.get_channel(bot.events[event_id]["channel_id"])
+			bot.channels[f"logs_{event_id}"] = bot.guild.get_channel(bot.events[event_id]["logs_channel_id"])
+		except :
+			pass
 
 	with open(bot.vars_file, "rt") as f :
 		bot.vars = json.load(f)
@@ -236,12 +245,12 @@ async def on_raw_reaction_add(payload) :
 								role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
 								await author.add_roles(role)
 								await author.dm_channel.send("Génial ! Heureux de te savoir parmi nous lors de cette soirée :slight_smile:")
-								await bot.channels["colocation"].send(f"{author.name} a accepté l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								await bot.channels[f"logs_{event_id}"].send(f"{author.name} a accepté l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
 
 							# invitation refusée
 							elif payload.emoji.name == chr(0x274C) :
 								bot.events[str(event_id)]["membres en attente"].remove(f"{author.name}#{author.discriminator}")
-								await bot.channels["colocation"].send(f"{author.name} a refusé l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								await bot.channels[f"logs_{event_id}"].send(f"{author.name} a refusé l'invitation à la soirée \"{bot.events[str(event_id)]['name']}\"")
 								await author.dm_channel.send("Très bien, peut-être une prochaine fois alors")
 								await bot.update_invitations_members(event_id)
 							event_id = bot.members[f"{author.name}#{author.discriminator}"]["msgid_to_eventid"].pop(str(message.id))
@@ -313,7 +322,7 @@ async def on_raw_reaction_remove(payload) :
 								role = bot.guild.get_role(bot.events[str(event_id)]["role_id"])
 								await author.remove_roles(role)
 								await author.dm_channel.send(f"Tu as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
-								await bot.channels["colocation"].send(f"{author.name} as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
+								await bot.channels[f"logs_{event_id}"].send(f"{author.name} as été supprimé des personnes présentes à la soirée \"{bot.events[str(event_id)]['name']}\"")
 								bot.events[str(event_id)]["membres présents"].remove(f"{author.name}#{author.discriminator}")
 								bot.write_json(bot.events, bot.events_file)
 								await bot.update_invitations_roles(event_id)
@@ -397,7 +406,6 @@ async def clock() :
 					message = await channel.fetch_message(bot.polls[poll_id]['msg_id'])
 					await message.reply(msg, file=file)
 				os.remove(f"poll_{poll_id}.png")
-				#await bot.channels["colocation"].send(msg, file=file)
 				polls_to_delete.append(poll_id)
 
 	for poll_id in polls_to_delete :

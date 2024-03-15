@@ -17,6 +17,7 @@ colocation_channel_id = 1179775060064600164
 general_annonces_channel_id = 1179810037116444802
 
 soirees_jeux_cat_id = 1179145721572765706
+colocation_cat_id = 1179145861926748221
 
 bot_owner_id = 394185214479302656
 

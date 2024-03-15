@@ -334,7 +334,10 @@ class GameBot(commands.Bot):
 		for event_id in self.events :
 			if not(self.events[event_id]["creation_finished"]) :
 				events_to_delete.append(event_id)
-				await self.guild.get_channel(self.events[event_id]["channel_id"]).delete()
+				await self.channels[f"{event_id}"].delete()
+				await self.channels[f"logs_{event_id}"].delete()
+				self.channels.pop(f"{event_id}")
+				self.channels.pop(f"logs_{event_id}")
 				await self.guild.get_role(self.events[event_id]["role_id"]).delete()
 				self.roles["roles_ids"].pop(str(event_id))
 				self.delete_invitation_messageid_for_event_member(event_id)
@@ -361,7 +364,13 @@ class GameBot(commands.Bot):
 			self.polls.pop(poll_id)
 		
 		await self.channels["colocation"].send(f"La soirée \"{self.events[str(event_id)]['name']}\" du {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']} a été supprimée.")
-		await self.guild.get_channel(self.events[str(event_id)]["channel_id"]).delete()
+		
+		# on supprime les salons
+		await self.channels[f"{event_id}"].delete()
+		await self.channels[f"logs_{event_id}"].delete()
+		self.channels.pop(f"{event_id}")
+		self.channels.pop(f"logs_{event_id}")
+
 		await self.guild.get_role(self.events[str(event_id)]["role_id"]).delete()
 		self.roles["roles_ids"].pop(str(event_id))
 		self.delete_invitation_messageid_for_event_member(event_id)
@@ -395,7 +404,7 @@ class GameBot(commands.Bot):
 		await message.add_reaction(chr(0x274C))
 		self.members[f"{member.name}#{member.discriminator}"]["msgid_to_eventid"][str(message.id)] = str(event_id)
 		self.write_json(self.members, self.members_file)
-		await self.channels["colocation"].send(f"Invitation à la soirée \"{self.events[str(event_id)]['name']}\" envoyée à {member.name}")
+		await self.channels[f"logs_{event_id}"].send(f"Invitation à la soirée \"{self.events[str(event_id)]['name']}\" envoyée à {member.name}")
 
 	async def update_invitations_members(self, event_id) :
 		nb_invited_members = len(self.events[str(event_id)]["membres présents"])+len(self.events[str(event_id)]["membres en attente"])
@@ -423,7 +432,7 @@ class GameBot(commands.Bot):
 				self.events[str(event_id)]["membres présents"].append(member)
 				await Member.add_roles(role)
 				await Member.dm_channel.send(f"Tu as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
-				await self.channels["colocation"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
+				await self.channels[f"logs_{event_id}"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
 			self.events[str(event_id)]["liste d'attente"] = []
 			self.write_json(self.events, self.events_file)
 		else :
@@ -433,7 +442,7 @@ class GameBot(commands.Bot):
 				self.events[str(event_id)]["liste d'attente"].pop(0)
 				await Member.add_roles(role)
 				await Member.dm_channel.send(f"Tu as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
-				await self.channels["colocation"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
+				await self.channels[f"logs_{event_id}"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
 			self.write_json(self.events, self.events_file)
 
 	async def remove_guest_from_event_members(self, event_id, member) :
@@ -465,7 +474,7 @@ class GameBot(commands.Bot):
 
 			# on le prévient et on préviens les colocataires
 			await member.dm_channel.send(f"Tu as été retiré(e) des participants à la soirée \"{self.events[str(event_id)]['name']}\".")
-			await self.channels["colocation"].send(f"{member.name} as été retiré(e) des participants à la soirée \"{self.events[str(event_id)]['name']}\".")
+			await self.channels[f"logs_{event_id}"].send(f"{member.name} as été retiré(e) des participants à la soirée \"{self.events[str(event_id)]['name']}\".")
 
 			# on actualise la file d'attente
 			if self.events[str(event_id)]["type_invités"] == "membres" :
@@ -574,8 +583,14 @@ class GameBot(commands.Bot):
 							"hour": datetime.split()[1].split(':')[0],
 							"minute": datetime.split()[1].split(':')[1]
 						}
-						channel_tmp = self.guild.get_channel(self.events[str(event_id)]["channel_id"])
+
+						# on met à jour le nom des salons
+						channel_tmp = self.channels[f"{event_id}"]
+						logs_channel_tmp = self.channels[f"logs_{event_id}"]
 						await channel_tmp.edit(name=self.events[str(event_id)]["name"])
+						await logs_channel_tmp.edit(name=f"logs-{self.events[str(event_id)]['name']}")
+
+						# on envoie le message
 						msg = f"Bienvenue dans ce salon temporaire !\n\n"
 						msg += f"Ce salon est un salon temporaire associé à une soirée jeux à laquelle tu participes, voici quelques informations sur la soirée :\n"
 						msg += f"Nom de la soirée : {self.events[str(event_id)]['name']}\n"
@@ -583,11 +598,13 @@ class GameBot(commands.Bot):
 						msg += f"Date : {self.events[str(event_id)]['datetime']['day']}/{self.events[str(event_id)]['datetime']['month']}/{self.events[str(event_id)]['datetime']['year']}\n"
 						msg += f"Heure : {self.events[str(event_id)]['datetime']['hour']}:{self.events[str(event_id)]['datetime']['minute']}\n"
 						await channel_tmp.send(msg)
+
 						self.events[str(event_id)]["creation_finished"] = True
 						self.members[f"{author.name}#{author.discriminator}"]["event_being_created"] = 0
 						self.members[f"{author.name}#{author.discriminator}"]["questionned_event_creation"] = False
 						self.write_json(self.members, self.members_file)
 						self.write_json(self.events, self.events_file)
+
 						await author.dm_channel.send("Soirée créée avec succès !")
 
 			# Création d'un jeu

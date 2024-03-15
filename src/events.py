@@ -13,16 +13,30 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 
 	elif crud == "create" :
 		if bot.members[f"{author.name}#{author.discriminator}"]["questions"] == [] :
+
+			# trouver un identifiant pour la soirée
 			id_number = 1
 			while str(id_number) in bot.events :
 				id_number += 1
+
+			# roles
 			role_soirees_jeux = await bot.get_role("soirées jeux")
 			role_colocataire = await bot.get_role("colocataire")
-			category = discord.utils.get(bot.guild.categories, id=soirees_jeux_cat_id)
+
+			# categories
+			soirees_jeux_cat = discord.utils.get(bot.guild.categories, id=soirees_jeux_cat_id)
+			colocation_cat = discord.utils.get(bot.guild.categories, id=colocation_cat_id)
+
+			# création roles et channels temporaires
 			role_tmp = await bot.get_role(str(id_number))
-			channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=category)
+			channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=soirees_jeux_cat)
+			logs_channel_tmp = await bot.guild.create_text_channel(name=str(id_number), category=colocation_cat)
 			await channel_tmp.set_permissions(role_tmp, read_messages=True, send_messages=True)
 			await channel_tmp.set_permissions(role_soirees_jeux, read_messages=False, send_messages=False)
+
+			bot.channels[f"{id_number}"] = channel_tmp
+			bot.channels[f"logs_{id_number}"] = logs_channel_tmp
+
 			bot.events[str(id_number)] = {
 				"name": "",
 				"datetime": "",
@@ -38,8 +52,10 @@ async def event_gamebot(ctx, crud=None, event_id=None, *args, **kwargs) :
 
 				"role_id": role_tmp.id,
 				"channel_id": channel_tmp.id,
+				"logs_channel_id": logs_channel_tmp.id,
 				"creation_finished": False
 			}
+
 			for member in bot.guild.members :
 				if member.get_role(role_colocataire.id) != None :
 					await member.add_roles(role_tmp)
