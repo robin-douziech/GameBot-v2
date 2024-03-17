@@ -23,7 +23,8 @@ bot_owner_id = 394185214479302656
 
 role_to_channel = {
 	"ésisarien(ne)": 1179805849531719775,
-	"soirées jeux": 1179805962987647037
+	"soirées jeux": 1179805962987647037,
+	"testeur": 1218976119441592511
 }
 
 # /!\ Si CRLF en début ou fin de message, le bot ne les enverra pas dans le message
