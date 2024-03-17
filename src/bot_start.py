@@ -217,6 +217,8 @@ async def on_raw_reaction_add(payload) :
 						if not(f"{author.name}#{author.discriminator}" in bot.events[str(event_id)]["membres présents"]+bot.events[str(event_id)]["liste d'attente"]) :
 							bot.events[str(event_id)]["liste d'attente"].append(f"{author.name}#{author.discriminator}")
 							bot.write_json(bot.events, bot.events_file)
+							await author.dm_channel.send(f"Tu as été ajouté(e) à la liste d'attente de la soirée \"{bot.events[str(event_id)]['name']}\". Attention: cela ne veut pas dire que tu y est inscrit(e). Je t'enverrai un message quand tu y seras inscrit(e).")
+							await bot.channels[f"logs_{event_id}"].send(f"{author.name} souhaite s'inscrire à cette soirée.")
 							await bot.update_invitations_roles(event_id)
 					except :
 						await author.dm_channel.send("Je n'arrive plus à trouver cette soirée jeux, elle a sûrement été supprimée")

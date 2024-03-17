@@ -431,7 +431,7 @@ class GameBot(commands.Bot):
 				Member = self.fetch_member(member)
 				self.events[str(event_id)]["membres présents"].append(member)
 				await Member.add_roles(role)
-				await Member.dm_channel.send(f"Tu as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
+				await Member.dm_channel.send(f"C'est bon ! Tu as été inscrit(e) à la soirée \"{self.events[str(event_id)]['name']}\".")
 				await self.channels[f"logs_{event_id}"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
 			self.events[str(event_id)]["liste d'attente"] = []
 			self.write_json(self.events, self.events_file)
@@ -441,7 +441,7 @@ class GameBot(commands.Bot):
 				self.events[str(event_id)]["membres présents"].append(self.events[str(event_id)]["liste d'attente"][0])
 				self.events[str(event_id)]["liste d'attente"].pop(0)
 				await Member.add_roles(role)
-				await Member.dm_channel.send(f"Tu as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
+				await Member.dm_channel.send(f"C'est bon ! Tu as été inscrit(e) à la soirée \"{self.events[str(event_id)]['name']}\".")
 				await self.channels[f"logs_{event_id}"].send(f"{Member.name} as été ajouté aux personnes présentes à la soirée \"{self.events[str(event_id)]['name']}\".")
 			self.write_json(self.events, self.events_file)
 
